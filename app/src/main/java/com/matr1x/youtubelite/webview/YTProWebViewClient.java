@@ -241,22 +241,33 @@ public class YTProWebViewClient extends WebViewClient {
 
 	@Override
 	public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-		return handleUrl(request.getUrl());
+		return handleUrl(view, request.getUrl());
 	}
 
 	@Override
 	public boolean shouldOverrideUrlLoading(WebView view, String url) {
-		return handleUrl(Uri.parse(url));
+		return handleUrl(view, Uri.parse(url));
 	}
 
-	private boolean handleUrl(Uri uri) {
+	private boolean handleUrl(WebView view, Uri uri) {
 		try {
 			String host = uri.getHost() == null ? "" : uri.getHost().toLowerCase();
 			if (host.equals("m.youtube.com") || host.equals("www.youtube.com") || host.equals("youtube.com")
 					|| host.endsWith(".youtube.com") || host.equals("youtu.be")
+					|| host.equals("youtube-nocookie.com") || host.endsWith(".youtube-nocookie.com")
 					|| host.equals("accounts.google.com") || host.equals("myaccount.google.com")
 					|| host.equals("consent.youtube.com")) {
 				return false;
+			}
+			// A Google redirect that points at a YouTube video stays inside the app.
+			if (host.equals("google.com") || host.endsWith(".google.com")) {
+				for (String p : new String[]{"q", "url", "u"}) {
+					String target = uri.getQueryParameter(p);
+					if (target != null && isYouTubeUrl(target)) {
+						view.loadUrl(target);
+						return true;
+					}
+				}
 			}
 			Intent i = new Intent(Intent.ACTION_VIEW, uri);
 			i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -264,6 +275,18 @@ public class YTProWebViewClient extends WebViewClient {
 		} catch (Exception ignored) {
 		}
 		return true;
+	}
+
+	private static boolean isYouTubeUrl(String url) {
+		try {
+			String h = Uri.parse(url).getHost();
+			if (h == null) return false;
+			h = h.toLowerCase();
+			return h.equals("youtu.be") || h.equals("youtube.com") || h.endsWith(".youtube.com")
+					|| h.equals("youtube-nocookie.com") || h.endsWith(".youtube-nocookie.com");
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	private String readAsset(String name) {
