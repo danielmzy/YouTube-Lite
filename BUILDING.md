@@ -5,7 +5,7 @@ YouTube Lite is a lightweight Android client that wraps the YouTube mobile web a
 | Item | Value |
 |---|---|
 | Package / applicationId | `com.matr1x.youtubelite` |
-| Version name / code | `1.0` / `1` |
+| Version name / code | `1.1` / `2` |
 | compileSdk / targetSdk | 36 / 36 |
 | minSdk | 21 (Android 5.0) |
 | Android Gradle Plugin | 8.13.0 |

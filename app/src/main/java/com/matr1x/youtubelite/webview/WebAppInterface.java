@@ -272,6 +272,61 @@ public class WebAppInterface {
 	}
 	
 	@JavascriptInterface
+	public boolean shareDownloadedFile(String displayName) {
+		try {
+			Uri fileUri = findDownloadedFile(displayName);
+			if (fileUri == null) return false;
+			String mime = activity.getContentResolver().getType(fileUri);
+			if (mime == null || mime.isEmpty()) mime = "*/*";
+			Intent send = new Intent(Intent.ACTION_SEND)
+					.setType(mime)
+					.putExtra(Intent.EXTRA_STREAM, fileUri)
+					.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
+			activity.startActivity(Intent.createChooser(send, "Share file"));
+			return true;
+		} catch (Exception ignored) {
+			return false;
+		}
+	}
+
+	@JavascriptInterface
+	public boolean deleteDownloadedFile(String displayName) {
+		try {
+			if (displayName == null || displayName.isEmpty()) return false;
+			if (Build.VERSION.SDK_INT >= 29) {
+				Uri collection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL);
+				int deleted = activity.getContentResolver().delete(collection,
+						MediaStore.Downloads.DISPLAY_NAME + "=? AND "
+								+ MediaStore.Downloads.RELATIVE_PATH + " LIKE ?",
+						new String[]{ displayName, "Download/Youtube Lite%" });
+				return deleted > 0;
+			}
+		} catch (Exception ignored) {
+		}
+		return false;
+	}
+
+	private Uri findDownloadedFile(String displayName) {
+		try {
+			if (displayName == null || displayName.isEmpty()) return null;
+			if (Build.VERSION.SDK_INT >= 29) {
+				Uri collection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL);
+				String[] projection = { MediaStore.Downloads._ID };
+				try (Cursor cursor = activity.getContentResolver().query(collection, projection,
+						MediaStore.Downloads.DISPLAY_NAME + "=? AND "
+								+ MediaStore.Downloads.RELATIVE_PATH + " LIKE ?",
+						new String[]{ displayName, "Download/Youtube Lite%" }, null)) {
+					if (cursor != null && cursor.moveToFirst()) {
+						return ContentUris.withAppendedId(collection, cursor.getLong(0));
+					}
+				}
+			}
+		} catch (Exception ignored) {
+		}
+		return null;
+	}
+
+	@JavascriptInterface
 	public void setBgPlay(boolean bgplay) {
 		activity.getSharedPreferences("YTPRO", Context.MODE_PRIVATE).edit().putBoolean("bgplay", bgplay).apply();
 	}

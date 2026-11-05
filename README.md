@@ -19,7 +19,7 @@ A clean, lightweight YouTube client for Android. YouTube Lite wraps the YouTube 
 
 ### Prebuilt APK
 
-Grab the latest signed build from **[Releases](https://github.com/danielmzy/YouTube-Lite/releases/latest)** — for example `YouTube_Lite-V1.0.apk`.
+Grab the latest signed build from **[Releases](https://github.com/danielmzy/YouTube-Lite/releases/latest)** — for example `YouTube_Lite-V1.1.apk`.
 
 * Android 5.0+ (API 21)
 * Installs side by side with the original YTPro
@@ -59,6 +59,7 @@ Requirements: JDK 17, Android SDK 36 (compileSdk 36, minSdk 21). See [BUILDING.m
   * Video (up to 4K), audio-only, thumbnails and captions
   * In-built video + audio muxer (MP4, on-device)
   * Download manager with history, per-video grouping and live speed
+  * Long-press any downloaded file for **Open / Share / Delete**
   * Files saved to `Download/Youtube Lite/<video title>/`
 * **Desktop-grade streams**
   * Formats resolved through YouTube's desktop WEB InnerTube API
@@ -107,6 +108,7 @@ Compared with [YTPro](https://github.com/prateek-chaubey/YTPro), this build is r
 
 * **Runs alongside the original** — different applicationId and label, so YouTube Lite and YTPro can be installed on the same device without overwriting each other
 * **New download manager** — grouped history, per-video folders, live speed, full/audio/video suffixes, thumbnails and captions included, one-tap open with the system player
+* **File actions menu** — long-press a downloaded file to Open, Share or Delete it; deleting also removes the history entry
 * **New RYD pill** — replaces the native like/dislike row, shows 👍/👎 and a ratio bar
 * **System captions bridge** — reads Android's accessibility caption settings and applies them to the player; adds a "Default Subtitles" toggle
 * **Desktop WEB API streaming** — 1440p/2160p and AV1/VP9 tracks are available from the downloader and quality picker

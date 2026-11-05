@@ -1428,11 +1428,85 @@ function ytdlFileRow(name){
 var row = document.createElement("div");
 row.className = "ytdlFileRow";
 row.dataset.file = name;
-row.style.cssText = "font-size:12px;line-height:1.4;padding:8px 2px;overflow-wrap:anywhere;cursor:pointer;border-bottom:1px solid rgba(128,128,128,.18);";
+row.style.cssText = "font-size:12px;line-height:1.4;padding:8px 2px;overflow-wrap:anywhere;cursor:pointer;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;border-bottom:1px solid rgba(128,128,128,.18);";
 row.textContent = "\u2713 " + name;
-row.addEventListener("click", function(e){ e.stopPropagation(); ytdlOpenFile(name); });
+ytdlBindRowMenu(row, name);
 return row;
 }
+
+function ytdlFindBody(row){ var b=row&&row.parentElement; return (b&&b.classList&&b.classList.contains("ytdlBody"))?b:null; }
+function ytdlCardOf(row){ var b=ytdlFindBody(row); if(!b) return null; return b.__card || (b.closest? b.closest(".ytdlCard"):null); }
+function ytdlRemoveHistoryFile(name){
+var h=ytdlHist(), out=[], changed=false;
+for(var i=0;i<h.length;i++){ if(h[i]&&h[i].n===name){ changed=true; } else out.push(h[i]); }
+if(changed) ytdlSaveHist(out);
+return changed;
+}
+function ytdlDeleteFile(name,row){
+var ok=false;
+try{ ok = window.Android && Android.deleteDownloadedFile ? Android.deleteDownloadedFile(name) : false; }catch(e){}
+if(!ok){ try{ Android.showToast("Delete failed: " + name); }catch(e){} return; }
+ytdlRemoveHistoryFile(name);
+var body=ytdlFindBody(row), card=ytdlCardOf(row);
+try{ if(row&&row.parentElement) row.parentElement.removeChild(row); }catch(e){}
+if(card) ytdlRefreshSub(card);
+var left=body?body.querySelectorAll(".ytdlFileRow").length:0;
+if(card && left===0){
+var det=document.getElementById("ytdlDetail");
+var inDetail = det && det.style.display!=="none" && det.contains(card);
+try{ if(card.parentElement) card.parentElement.removeChild(card); }catch(e){}
+if(inDetail && window.ytdlCloseDetail) try{ ytdlCloseDetail(); }catch(e){}
+var list=document.getElementById("ytdlList");
+if(list && !list.querySelector(".ytdlCard")){ var em=document.createElement("div"); em.className="ytdlEmpty"; em.textContent="No downloads yet"; em.style.cssText="text-align:center;opacity:.6;font-size:13px;padding:24px 0;"; list.appendChild(em); }
+}
+try{ Android.showToast("Deleted"); }catch(e){}
+}
+function ytdlShowFileMenu(name,row){
+var old=document.getElementById("ytdlFileWrap"); if(old) old.remove();
+var wrap=document.createElement("div"); wrap.id="ytdlFileWrap";
+wrap.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:2147483647;display:flex;align-items:center;justify-content:center;";
+var menu=document.createElement("div");
+menu.style.cssText="width:78%;max-width:340px;background:#212121;color:#fff;border-radius:14px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.55);";
+var head=document.createElement("div");
+head.style.cssText="padding:12px 16px;font-size:12px;opacity:.65;border-bottom:1px solid rgba(255,255,255,.1);overflow-wrap:anywhere;";
+head.textContent=name;
+menu.appendChild(head);
+function item(label,act,color){ var d=document.createElement("div"); d.dataset.m=act; d.textContent=label; d.style.cssText="padding:14px 16px;font-size:15px;cursor:pointer;"+(color?"color:"+color+";":""); menu.appendChild(d); }
+item("Open","open"); item("Share","share"); item("Delete","delete","#ff6b6b"); item("Cancel","cancel");
+menu.addEventListener("click", function(e){
+var t=e.target&&e.target.closest?e.target.closest("[data-m]"):null; if(!t) return;
+var act=t.dataset.m; wrap.remove();
+if(act==="open") ytdlOpenFile(name);
+else if(act==="share"){ var ok=false; try{ ok=Android.shareDownloadedFile(name); }catch(x){} if(!ok){ try{Android.showToast("Share failed");}catch(x){} } }
+else if(act==="delete") ytdlDeleteFile(name,row);
+});
+wrap.addEventListener("click", function(e){ if(e.target===wrap) wrap.remove(); });
+wrap.appendChild(menu);
+document.body.appendChild(wrap);
+}
+function ytdlBindRowMenu(row,name){
+var timer=null, fired=false, sx=0, sy=0;
+function clearT(){ if(timer){ clearTimeout(timer); timer=null; } }
+row.addEventListener("touchstart", function(e){
+if(e.touches && e.touches.length!==1) return;
+var t=e.touches?e.touches[0]:e; sx=t.clientX; sy=t.clientY; fired=false;
+clearT();
+timer=setTimeout(function(){ fired=true; ytdlShowFileMenu(name,row); }, 550);
+}, {passive:true});
+row.addEventListener("touchmove", function(e){
+if(!timer) return; var t=e.touches?e.touches[0]:e;
+if(t && (Math.abs(t.clientX-sx)>12 || Math.abs(t.clientY-sy)>12)) clearT();
+}, {passive:true});
+row.addEventListener("touchend", function(){ clearT(); });
+row.addEventListener("touchcancel", function(){ clearT(); });
+row.addEventListener("contextmenu", function(e){ e.preventDefault(); });
+row.addEventListener("click", function(e){
+e.stopPropagation();
+if(fired){ fired=false; e.preventDefault(); return; }
+ytdlOpenFile(name);
+});
+}
+
 function ytdlRefreshSub(card){
 var sub = card.querySelector(".ytdlSub"); if(!sub) return;
 var b = card.querySelector(".ytdlBody");

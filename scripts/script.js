@@ -865,13 +865,14 @@ aboutPage.innerHTML=`<style>#aboutPageDiv a{text-decoration:underline;}</style>
 <br><br>
 <b style="font-size:1.5rem;color:${c};">YouTube Lite</b>
 <br><br>
-<span style="font-size:1.1rem;">V1.0</span>
+<span id="ytlAboutVer" style="font-size:1.1rem;">V1.1</span>
 <br><br>
 <p style="font-size:1.2rem;width:calc(100% - 20px);margin:auto;text-align:left;"><b style="font-weight:bold">Disclaimer</b>: This is an educational project aimed at showcasing javascript injection into a webview to enhance productivity.<br>
 You can find the source code at <a href="https://github.com/danielmzy/YouTube-Lite/" style="font-family:monospace;" > https://github.com/danielmzy/YouTube-Lite/</a>
 <br><br><span style="font-family:'Dancing Script','cursive';font-weight:bold;font-style:normal;-webkit-text-stroke:0.55px #ffffff">In Memorise of Ma Xuesen</span><br><br><b>Special Thanks to:</b><br>prateek-chaubey, YTPro(https://github.com/prateek-chaubey/YTPRO).<br>Anarios, return-youtube-dislike(https://github.com/Anarios/return-youtube-dislike)<br>OpenAI, Codex</p>
 <br><br><br>`;
 ytpSet.appendChild(aboutPage);
+try{ var _av=document.getElementById("ytlAboutVer"); var _iv=(window.Android&&Android.getInfo)?Android.getInfo():""; if(_av&&_iv) _av.textContent="V"+_iv; }catch(e){}
 
 
 document.getElementById("ytproUrlInput").addEventListener("keyup",searchUrl);
