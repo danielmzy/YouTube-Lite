@@ -48,4 +48,28 @@ public final class DownloadPaths {
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
                 relativeDir());
     }
+
+    private static String sanitizeFolder(String title) {
+        String s = title == null ? "" : title.trim();
+        s = s.replaceAll("[\\\\/:*?\"<>|\\p{Cntrl}]", "-").trim();
+        if (s.length() > 80) s = s.substring(0, 80).trim();
+        return s;
+    }
+
+    /** "Youtube Lite" or "Youtube Lite/&lt;title&gt;" without touching the active folder. */
+    public static String relativeDirFor(String title) {
+        String f = sanitizeFolder(title);
+        return f.isEmpty() ? ROOT : ROOT + "/" + f;
+    }
+
+    public static String mediaDirFor(String title) {
+        return "Download/" + relativeDirFor(title);
+    }
+
+    /** Absolute directory for a specific video title. */
+    public static File dirFor(String title) {
+        return new File(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                relativeDirFor(title));
+    }
 }

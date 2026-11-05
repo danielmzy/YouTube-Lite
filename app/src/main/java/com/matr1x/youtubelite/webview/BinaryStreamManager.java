@@ -1,11 +1,7 @@
 package com.matr1x.youtubelite.webview;
 
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
-import android.os.Build;
-import android.provider.MediaStore;
 import android.util.Log;
 
 import androidx.webkit.WebMessageCompat;
@@ -27,14 +23,9 @@ public class BinaryStreamManager {
 
     private final YTProWebView webView;
     private final Context context;
-    private final ExecutorService ioExecutor = Executors.newFixedThreadPool(2);
 
-    // API 29+ path: store OutputStreams and their URIs
+    // Open temporary track streams (cache/ytpro_dl)
     private final ConcurrentHashMap<String, OutputStream> fileStreams = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, Uri> fileUris = new ConcurrentHashMap<>();
-
-    // API 21-28 path: keep FileOutputStream separately
-    private final ConcurrentHashMap<String, FileOutputStream> legacyStreams = new ConcurrentHashMap<>();
 
     // One serial writer per file: chunks can never be written out of order,
     // and two downloads of the same name cannot interleave into one stream.
@@ -69,6 +60,21 @@ public class BinaryStreamManager {
         final ExecutorService writer = Executors.newSingleThreadExecutor();
         writers.put(fileName, writer);
 
+        // Safety net: if JS never sends END (page reload/crash), close the stream
+        // after 90s so the writer thread and cache file do not leak.
+        Thread idle = new Thread(() -> {
+            try { Thread.sleep(90000); } catch (InterruptedException e) { return; }
+            OutputStream stale = fileStreams.remove(fileName);
+            if (stale != null) {
+                try { stale.close(); } catch (Exception ignored) {}
+                Log.w("YTPRO_STREAM", "Stream idle timeout: " + fileName);
+            }
+            ExecutorService w = writers.remove(fileName);
+            if (w != null) w.shutdown();
+        });
+        idle.setDaemon(true);
+        idle.start();
+
         WebMessagePortCompat[] channel = WebViewCompat.createWebMessageChannel(webView);
         WebMessagePortCompat localPort = channel[0];
         WebMessagePortCompat jsPort = channel[1];
@@ -100,19 +106,10 @@ public class BinaryStreamManager {
                 if (os != null) os.write(chunk);
             } else if (message.getType() == WebMessageCompat.TYPE_STRING
                     && "END".equals(message.getData())) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    OutputStream os = fileStreams.remove(fileName);
-                    if (os != null) {
-                        os.flush();
-                        os.close();
-                    }
-                    fileUris.remove(fileName);
-                } else {
-                    FileOutputStream fos = legacyStreams.remove(fileName);
-                    if (fos != null) {
-                        fos.flush();
-                        fos.close();
-                    }
+                OutputStream os = fileStreams.remove(fileName);
+                if (os != null) {
+                    os.flush();
+                    os.close();
                 }
                 port.close();
                 ExecutorService w = writers.remove(fileName);
@@ -124,41 +121,14 @@ public class BinaryStreamManager {
         }
     }
 
-    // Returns the Uri for a file already written by this app (for muxer input)
-    public Uri getUriForFile(String fileName) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            return fileUris.get(fileName);
-        }
-        return null;
-    }
-
-    private String getMimeType(String fileName) {
-        if (fileName.endsWith(".webm")) return "video/webm";
-        if (fileName.endsWith(".mp4"))  return "video/mp4";
-        if (fileName.endsWith(".m4a"))  return "audio/mp4";
-        if (fileName.endsWith(".opus")) return "audio/ogg";
-        return "application/octet-stream";
-    }
-
     public void cleanup() {
         for (OutputStream os : fileStreams.values()) {
             try { os.flush(); os.close(); } catch (Exception ignored) {}
         }
-        for (FileOutputStream fos : legacyStreams.values()) {
-            try { fos.flush(); fos.close(); } catch (Exception ignored) {}
-        }
-        // Streams still registered here never received an END: delete the
-        // partially written entries instead of leaving broken visible files.
-        for (Uri uri : fileUris.values()) {
-            try { context.getContentResolver().delete(uri, null, null); } catch (Exception ignored) {}
-        }
         fileStreams.clear();
-        legacyStreams.clear();
-        fileUris.clear();
         for (ExecutorService w : writers.values()) {
             try { w.shutdown(); } catch (Exception ignored) {}
         }
         writers.clear();
-        ioExecutor.shutdown();
     }
 }

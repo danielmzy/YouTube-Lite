@@ -49,6 +49,21 @@ public class WebAppInterface {
 		this.web = web;
 		this.audioManager = (AudioManager) activity.getSystemService(Context.AUDIO_SERVICE);
 	}
+
+	private boolean trusted() {
+		try {
+			String u = activity.currentUrl;
+			if (u == null || u.isEmpty()) u = web.getUrl();
+			if (u == null) return false;
+			String h = Uri.parse(u).getHost();
+			if (h == null) return false;
+			h = h.toLowerCase();
+			return h.equals("m.youtube.com") || h.equals("www.youtube.com") || h.equals("youtube.com")
+					|| h.endsWith(".youtube.com") || h.equals("youtu.be");
+		} catch (Exception e) {
+			return false;
+		}
+	}
 	
 	@JavascriptInterface
 	public void splashReady() {
@@ -70,17 +85,36 @@ public class WebAppInterface {
 	
 	@JavascriptInterface
 	public void downvid(String name, String url, String m) {
-		String saved = DownloadUtils.downloadFile(activity, name, url, m);
-		if (saved == null) return;
-		try {
-			final String js = "window.ytdlAddHistory&&ytdlAddHistory(" + JSONObject.quote(saved) + "," + JSONObject.quote(name == null ? saved : name) + ",\"\")";
-			activity.runOnUiThread(() -> web.evaluateJavascript(js, null));
-		} catch (Exception ignored) {
-		}
+		if (!trusted()) return;
+		String[] out = new String[1];
+		final long id = DownloadUtils.enqueue(activity, name, url, m, out);
+		if (id < 0 || out[0] == null) return;
+		final String saved = out[0];
+		final String titleArg = name == null ? saved : name;
+		final DownloadManager dm = (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
+		new Thread(() -> {
+			int status = -1;
+			for (int i = 0; i < 1200; i++) {
+				try { Thread.sleep(1500); } catch (InterruptedException e) { return; }
+				status = DownloadUtils.statusOf(id, dm);
+				if (status == DownloadManager.STATUS_SUCCESSFUL || status == DownloadManager.STATUS_FAILED) break;
+			}
+			try {
+				String js;
+				if (status == DownloadManager.STATUS_SUCCESSFUL) {
+					js = "window.ytdlAddHistory&&ytdlAddHistory(" + JSONObject.quote(saved) + "," + JSONObject.quote(titleArg) + ",\"\")";
+				} else {
+					js = "window.ytdlDownloadFailed&&ytdlDownloadFailed(" + JSONObject.quote(saved) + "," + JSONObject.quote("download failed") + ")";
+				}
+				activity.runOnUiThread(() -> web.evaluateJavascript(js, null));
+			} catch (Exception ignored) {
+			}
+		}).start();
 	}
 	
 	@JavascriptInterface
 	public String apkDownload(String url, String name) {
+		if (!trusted()) return "";
 		if (url == null || (!url.startsWith("http://") && !url.startsWith("https://"))) return "";
 		try {
 			DownloadManager dm = (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
@@ -125,6 +159,7 @@ public class WebAppInterface {
 
 	@JavascriptInterface
 	public boolean installApk(String idStr) {
+		if (!trusted()) return false;
 		try {
 			final long id = Long.parseLong(idStr);
 			if (Build.VERSION.SDK_INT >= 26 && !activity.getPackageManager().canRequestPackageInstalls()) {
@@ -159,6 +194,7 @@ public class WebAppInterface {
 	
 	@JavascriptInterface
 	public void oplink(String url) {
+		if (!trusted()) return;
 		Intent i = new Intent(Intent.ACTION_VIEW);
 		i.setData(Uri.parse(url));
 		activity.startActivity(i);
@@ -199,11 +235,13 @@ public class WebAppInterface {
 	
 	@JavascriptInterface
 	public void setDownloadFolder(String title) {
+		if (!trusted()) return;
 		DownloadPaths.setFolder(title);
 	}
 
 	@JavascriptInterface
 	public void requestBinaryPort(String fileName) {
+		if (!trusted()) return;
 		activity.runOnUiThread(() -> {
 			if (activity.streamManager != null) {
 				activity.streamManager.openStreamForFile(fileName);
@@ -213,7 +251,13 @@ public class WebAppInterface {
 	
 	@JavascriptInterface
 	public void muxVideoAudio(String videoFileName,String audioFileName,String outputFileName) {
-		java.io.File downloads = DownloadPaths.dir();
+		muxVideoAudio(videoFileName, audioFileName, outputFileName, null);
+	}
+
+	@JavascriptInterface
+	public void muxVideoAudio(String videoFileName,String audioFileName,String outputFileName,String folder) {
+		if (!trusted()) return;
+		java.io.File downloads = (folder == null || folder.trim().isEmpty()) ? DownloadPaths.dir() : DownloadPaths.dirFor(folder);
 		java.io.File cache = new java.io.File(activity.getCacheDir(), "ytpro_dl");
 		java.io.File video  = new java.io.File(cache, videoFileName);
 		java.io.File audio  = new java.io.File(cache, audioFileName);
@@ -244,6 +288,7 @@ public class WebAppInterface {
 	
 	@JavascriptInterface
 	public boolean openDownloadedFile(String displayName) {
+		if (!trusted()) return false;
 		try {
 			if (displayName == null || displayName.isEmpty()) return false;
 			if (Build.VERSION.SDK_INT >= 29) {
@@ -273,6 +318,7 @@ public class WebAppInterface {
 	
 	@JavascriptInterface
 	public boolean shareDownloadedFile(String displayName) {
+		if (!trusted()) return false;
 		try {
 			Uri fileUri = findDownloadedFile(displayName);
 			if (fileUri == null) return false;
@@ -291,6 +337,7 @@ public class WebAppInterface {
 
 	@JavascriptInterface
 	public boolean deleteDownloadedFile(String displayName) {
+		if (!trusted()) return false;
 		try {
 			if (displayName == null || displayName.isEmpty()) return false;
 			if (Build.VERSION.SDK_INT >= 29) {
@@ -328,6 +375,7 @@ public class WebAppInterface {
 
 	@JavascriptInterface
 	public void setBgPlay(boolean bgplay) {
+		if (!trusted()) return;
 		activity.getSharedPreferences("YTPRO", Context.MODE_PRIVATE).edit().putBoolean("bgplay", bgplay).apply();
 	}
 	
@@ -389,14 +437,16 @@ public class WebAppInterface {
 	
 	@JavascriptInterface
 	public void getSNlM0e(String cookies) {
+		if (!trusted()) return;
 		new Thread(() -> {
 			String response = GeminiWrapper.getSNlM0e(cookies);
-			activity.runOnUiThread(() -> web.evaluateJavascript("callbackSNlM0e.resolve(`" + response + "`)", null));
+			activity.runOnUiThread(() -> web.evaluateJavascript("callbackSNlM0e.resolve(" + JSONObject.quote(response) + ")", null));
 		}).start();
 	}
 	
 	@JavascriptInterface
 	public void GeminiClient(String url, String headers, String body) {
+		if (!trusted()) return;
 		new Thread(() -> {
 			JSONObject response = GeminiWrapper.getStream(url, headers, body);
 			activity.runOnUiThread(() -> web.evaluateJavascript("callbackGeminiClient.resolve(" + response + ")", null));
@@ -405,13 +455,16 @@ public class WebAppInterface {
 	
 	@JavascriptInterface
 	public String getAllCookies(String url) {
-		return CookieManager.getInstance().getCookie(url);
+		if (!trusted()) return "";
+		String target = (url != null && url.contains("youtube.com")) ? url : "https://m.youtube.com";
+		return CookieManager.getInstance().getCookie(target);
 	}
 	
 	@JavascriptInterface
 	public float getVolume() {
 		int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
 		int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+		if (maxVolume <= 0) return 0f;
 		return (float) currentVolume / maxVolume;
 	}
 	

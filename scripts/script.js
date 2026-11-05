@@ -486,18 +486,14 @@ checkSponsors(window.location.href);
 
 if((window.location.pathname.indexOf("watch") > -1) || (window.location.pathname.indexOf("shorts") > -1)){
 var unV=setInterval(() => {
-
-
+try{
+var vs=document.getElementsByClassName('video-stream')[0];
+if(!vs) return;
 /*Unmute The Video*/ 
-
-document.getElementsByClassName('video-stream')[0].muted=false;
-
-if(!document.getElementsByClassName('video-stream')[0].muted){
-clearInterval(unV);
-
-}
-
-}, 5);
+vs.muted=false;
+if(!vs.muted){ clearInterval(unV); }
+}catch(e){}
+}, 250);
 
 }
 
@@ -2411,7 +2407,8 @@ ytoldV=window.location.pathname;
 }
 
 
-setInterval(pkc,300);
+if(window.__pkcTimer) clearInterval(window.__pkcTimer);
+window.__pkcTimer=setInterval(pkc,300);
 
 /*Tell the native splash that the injected UI is ready*/
 try{ setTimeout(function(){ try{ Android.splashReady(); }catch(e){} }, 1200); }catch(e){}
@@ -2990,5 +2987,5 @@ function showCurtain(){
     } catch(e) {}
   }
   hideGoogleAccount();
-  setInterval(hideGoogleAccount, 700);
+  if(!window.__ytlGaTimer) window.__ytlGaTimer=setInterval(hideGoogleAccount, 1000);
 })();

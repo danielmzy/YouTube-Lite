@@ -37,6 +37,8 @@ import com.matr1x.youtubelite.captions.CaptioningController;
 
 public class MainActivity extends Activity {
 
+	public volatile String currentUrl = "";
+
     public boolean portrait = false;
     public boolean isPlaying = false;
     public boolean mediaSession = false;
@@ -66,8 +68,6 @@ public class MainActivity extends Activity {
         if (!prefs.contains("bgplay")) {
             prefs.edit().putBoolean("bgplay", true).apply();
         }
-
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         // The media notification is the only playback control once the app is in the
         // background, so ask for the permission up front on Android 13+.
@@ -270,6 +270,16 @@ public class MainActivity extends Activity {
         }
         if (streamManager != null) {
             streamManager.cleanup();
+        }
+        if (web != null) {
+            try { web.removeJavascriptInterface("Android"); } catch (Exception ignored) {}
+            try { web.stopLoading(); } catch (Exception ignored) {}
+            try {
+                web.loadUrl("about:blank");
+                web.clearHistory();
+                web.destroy();
+            } catch (Exception ignored) {}
+            web = null;
         }
         if (captioningController != null) {
             captioningController.destroy();

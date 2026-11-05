@@ -1,6 +1,9 @@
 package com.matr1x.youtubelite.webview;
 
 import android.content.Intent;
+import android.net.Uri;
+
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
@@ -34,6 +37,7 @@ public class YTProWebViewClient extends WebViewClient {
 	
 	@Override
 	public void onPageStarted(WebView view, String url, Bitmap favicon) {
+		if (activity != null && url != null) activity.currentUrl = url;
 		if (activity.getCaptioningController() != null) {
 			activity.getCaptioningController().onPageStarted();
 		}
@@ -64,7 +68,7 @@ public class YTProWebViewClient extends WebViewClient {
 }
 
 		
-		if (request.isForMainFrame() && (url.contains("m.youtube.com") || url.contains("www.youtube.com"))) {
+		if (request.isForMainFrame() && isYouTubeHost(url)) {
 			try {
 				URL newUrl = new URL(url);
 				HttpsURLConnection connection = (HttpsURLConnection) newUrl.openConnection();
@@ -223,12 +227,52 @@ public class YTProWebViewClient extends WebViewClient {
 		return super.shouldInterceptRequest(view, request);
 	}
 	
+	private static boolean isYouTubeHost(String url) {
+		try {
+			String h = Uri.parse(url).getHost();
+			if (h == null) return false;
+			h = h.toLowerCase();
+			return h.equals("youtube.com") || h.endsWith(".youtube.com");
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+		return handleUrl(request.getUrl());
+	}
+
+	@Override
+	public boolean shouldOverrideUrlLoading(WebView view, String url) {
+		return handleUrl(Uri.parse(url));
+	}
+
+	private boolean handleUrl(Uri uri) {
+		try {
+			String host = uri.getHost() == null ? "" : uri.getHost().toLowerCase();
+			if (host.equals("m.youtube.com") || host.equals("www.youtube.com") || host.equals("youtube.com")
+					|| host.endsWith(".youtube.com") || host.equals("youtu.be")
+					|| host.equals("accounts.google.com") || host.equals("myaccount.google.com")
+					|| host.equals("consent.youtube.com")) {
+				return false;
+			}
+			Intent i = new Intent(Intent.ACTION_VIEW, uri);
+			i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			activity.startActivity(i);
+		} catch (Exception ignored) {
+		}
+		return true;
+	}
+
 	@Override
 	public void onPageFinished(WebView view, String url) {
-		web.evaluateJavascript("if (window.trustedTypes && window.trustedTypes.createPolicy && !window.trustedTypes.defaultPolicy) {window.trustedTypes.createPolicy('default', {createHTML: (string) => string,createScriptURL: string => string, createScript: string => string, });}", null);
-		web.evaluateJavascript("(function () { var script = document.createElement('script'); script.src='https://youtube.com/ytpro_cdn/npm/ytpro@latest?v=' + Date.now(); document.body.appendChild(script);  })();", null);
-		web.evaluateJavascript("(function () { var script = document.createElement('script'); script.src='https://youtube.com/ytpro_cdn/npm/ytpro@latest/bgplay.js?v=' + Date.now(); document.body.appendChild(script);  })();", null);
-		web.evaluateJavascript("(function () { var script = document.createElement('script');script.type='module';script.src='https://youtube.com/ytpro_cdn/npm/ytpro@latest/innertube.js?v=' + Date.now(); document.body.appendChild(script);  })();", null);
+		if (isYouTubeHost(url)) {
+			web.evaluateJavascript("if (window.trustedTypes && window.trustedTypes.createPolicy && !window.trustedTypes.defaultPolicy) {window.trustedTypes.createPolicy('default', {createHTML: (string) => string,createScriptURL: string => string, createScript: string => string, });}", null);
+			web.evaluateJavascript("(function () { var script = document.createElement('script'); script.src='https://youtube.com/ytpro_cdn/npm/ytpro@latest?v=' + Date.now(); document.body.appendChild(script);  })();", null);
+			web.evaluateJavascript("(function () { var script = document.createElement('script'); script.src='https://youtube.com/ytpro_cdn/npm/ytpro@latest/bgplay.js?v=' + Date.now(); document.body.appendChild(script);  })();", null);
+			web.evaluateJavascript("(function () { var script = document.createElement('script');script.type='module';script.src='https://youtube.com/ytpro_cdn/npm/ytpro@latest/innertube.js?v=' + Date.now(); document.body.appendChild(script);  })();", null);
+		}
 		
 		
 		

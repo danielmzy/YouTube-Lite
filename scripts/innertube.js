@@ -1053,7 +1053,7 @@ window.Android.showToast('Muxing formats...');
 
 const muxOutName = `${safeTitle}_${new Date().getTime()}_FULL.${containerExt}`;
 pendingMuxCards[muxOutName] = window.__ytdlLastCard;
-window.Android?.muxVideoAudio?.(videoFileName,audioFileName,muxOutName);
+window.Android?.muxVideoAudio?.(videoFileName,audioFileName,muxOutName, (window.__ytdlCtx && window.__ytdlCtx.t) ? window.__ytdlCtx.t : (typeof ytdlPageTitle === 'function' ? ytdlPageTitle() : ''));
 
 }
 
@@ -1367,6 +1367,16 @@ try{ Android.showToast("Download records cleared"); }catch(err){}
 
 
 
+
+window.ytdlDownloadFailed = function(name, reason){
+try{ Android.showToast("Download failed: " + (reason || name)); }catch(e){}
+try{
+var h = ytdlHist().filter(function(x){ return !(x && x.n === name); });
+ytdlSaveHist(h);
+var live = document.querySelector('#ytdlList .ytdlCard[data-v="' + (window.__ytdlCtx && window.__ytdlCtx.v || '') + '"]');
+if(live){ /* keep card; it will refresh on next download */ }
+}catch(e){}
+};
 
 window.ytdlAddHistory = function(name, title, thumb){
 if(!name) return;

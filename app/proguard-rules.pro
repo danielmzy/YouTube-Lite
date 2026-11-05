@@ -19,3 +19,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Keep the JavaScript bridge: R8 must not strip or rename @JavascriptInterface methods.
+-keepclassmembers class com.matr1x.youtubelite.webview.WebAppInterface {
+    @android.webkit.JavascriptInterface <methods>;
+}
+-keep class com.matr1x.youtubelite.webview.WebAppInterface { *; }
