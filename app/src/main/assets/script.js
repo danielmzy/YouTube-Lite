@@ -32,7 +32,7 @@ var script = document.createElement('script'); script.src="//youtube.com/ytpro_c
 if(!YTProVer){
 
 /*Few Stupid Inits*/
-var YTProVer="1.0";
+var YTProVer=(function(){try{var v=Android.getInfo();return v||"1.0";}catch(e){return "1.0";}})();
 var ytoldV="";
 var isF=false;   //what is this for?
 var isAp=false; // oh it's for bg play 
@@ -1009,16 +1009,53 @@ a.click();
 }
 }
 
-function checkUpdates(){
-if(parseFloat(Android.getInfo()) < parseFloat(YTProVer) ){
-updateModel();
-}else{
-Android.showToast("Your app is up to date");
-}
 
-fetch('https://youtube.com/ytpro_cdn/npm/ytpro', {cache: 'reload'});
-fetch('https://youtube.com/ytpro_cdn/npm/ytpro/bgplay.js', {cache: 'reload'});
-fetch('https://youtube.com/ytpro_cdn/npm/ytpro/innertube.js', {cache: 'reload'});
+function parseVer(v){ v=String(v||"").trim().replace(/^v/i,""); var m=v.match(/\d+(?:\.\d+)*/); if(!m) return [0]; return m[0].split(".").map(function(x){return parseInt(x,10)||0;}); }
+function verGt(a,b){ var A=parseVer(a),B=parseVer(b); for(var i=0;i<Math.max(A.length,B.length);i++){ var x=A[i]||0,y=B[i]||0; if(x!==y) return x>y; } return false; }
+function fetchLatestRelease(ok,err){ fetch("https://api.github.com/repos/danielmzy/YouTube-Lite/releases/latest",{headers:{"Accept":"application/vnd.github+json"},cache:"no-store"}).then(function(r){ if(r.status===404){ ok(null); return null; } if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); }).then(function(j){ if(j) ok(j); }).catch(function(e){ if(err) err(e && e.message ? e.message : String(e)); }); }
+function checkUpdates(){
+ Android.showToast("Checking for updates…");
+ fetchLatestRelease(function(rel){
+   if(!rel){ Android.showToast("No releases published yet"); return; }
+   var latest=(rel.tag_name||rel.name||"").trim();
+   if(latest && verGt(latest,Android.getInfo())){ showUpdateDialog(rel); }
+   else { Android.showToast("Your app is up to date (v"+Android.getInfo()+")"); }
+ }, function(msg){ Android.showToast("Update check failed: "+msg); });
+ fetch("https://youtube.com/ytpro_cdn/npm/ytpro",{cache:"reload"});
+ fetch("https://youtube.com/ytpro_cdn/npm/ytpro/bgplay.js",{cache:"reload"});
+ fetch("https://youtube.com/ytpro_cdn/npm/ytpro/innertube.js",{cache:"reload"});
+}
+function showUpdateDialog(rel){
+ var tag=(rel.tag_name||rel.name||"new build").trim();
+ var date=rel.published_at?new Date(rel.published_at):null;
+ var notes=(rel.body||"").trim()||"No changelog provided.";
+ var apk=null;
+ try{ (rel.assets||[]).forEach(function(a){ if(!apk && /\.apk$/i.test(a.name||"")) apk=a; }); }catch(e){}
+ var x=document.createElement("div");
+ x.setAttribute("style","height:100%;width:100%;position:fixed;display:grid;align-items:center;top:0;left:0;background:rgba(0,0,0,.6);z-index:99999;");
+ x.innerHTML='<div style="margin:auto;width:78%;max-height:70%;padding:18px;background:#212121;border:1px solid #888;border-radius:14px;color:#fff;display:flex;flex-direction:column;">'
+  +'<h2 style="margin:0 0 6px 0;">Update Available</h2>'
+  +'<div id="ytlUpdSub" style="font-size:12px;color:#aaa;margin-bottom:10px;"></div>'
+  +'<div id="ytlUpdNotes" style="white-space:pre-wrap;font-size:13px;line-height:1.45;overflow:auto;max-height:38vh;padding-right:4px;"></div>'
+  +'<div style="display:flex;gap:10px;margin-top:14px;">'
+  +'<button data-action="cancel" style="flex:1;border:0;border-radius:10px;height:34px;background:#3a3a3a;color:#fff;">Later</button>'
+  +'<button data-action="url" style="flex:1;border:0;border-radius:10px;height:34px;background:#3a3a3a;color:#fff;">Release page</button>'
+  +'<button data-action="download" style="flex:1.2;border:0;border-radius:10px;height:34px;background:rgba(255,66,66,.85);color:#fff;">Download APK</button>'
+  +'</div></div>';
+ var sub=x.querySelector("#ytlUpdSub"), n=x.querySelector("#ytlUpdNotes");
+ sub.textContent="v"+Android.getInfo()+" → "+tag+(date?" · "+date.toISOString().slice(0,10):"");
+ n.textContent=notes;
+ x.addEventListener("click",function(e){
+   var el=e.target.closest("[data-action]");
+   if(!el) return;
+   var action=el.dataset.action;
+   if(action==="cancel"){ x.remove(); }
+   else if(action==="download"){
+     if(apk && apk.browser_download_url){ Android.downvid(apk.name||("YouTubeLite-"+tag+".apk"),apk.browser_download_url,"application/vnd.android.package-archive"); }
+     else { Android.oplink(rel.html_url); }
+   } else if(action==="url"){ Android.oplink(rel.html_url); }
+ });
+ document.body.appendChild(x);
 }
 
 
@@ -2190,11 +2227,7 @@ ytproGemini.addEventListener("click",
 async function(){
 
 
-if(parseFloat(Android.getInfo()) < parseFloat(YTProVer)){
-updateModel();
 
-return;
-}
 
 geminiInfo();
 
@@ -2813,58 +2846,25 @@ observer.observe(targetNode, config);
 
 
 /*Update your app bruh*/
-function updateModel(){
-var x=document.createElement("div");
 
-x.setAttribute("style",`height:100%;width:100%;position:fixed;display:grid;align-items:center;top:0;left:0;background:rgba(0,0,0,.6);z-index:99999;`);
-
-x.innerHTML=`
-<div style="height:auto;width:70%;padding:20px;background:rgba(0,0,0,.6);border:1px solid #888;box-shadow:0px 0px 5px black;color:white;backdrop-filter:blur(10px);border-radius:15px;margin:auto">
-<h2> Update Available</h2><br>
-Latest Version ${YTProVer} of YouTube Lite is available, update YouTube Lite to get the latest features.
-<br>
-- Fixed Downloader<br>
-- Added container lables on Audio Only<br>
-- Fixed Gemini Bugs , added new models<br>
-- Optimized overall UI<br>
-- Fixed bugs and improved functionality<br>
-- for the full list <u data-action="url" >click here</u>
-<br>
-<br>
-<div style="display:flex;">
-<button style="border:0;border-radius:10px;height:30px;width:150px;background:;" data-action="cancel">Cancel</button>
-<button style="border:0;border-radius:10px;height:30px;width:150px;background:rgba(255,50,50,.7);float:right;" data-action="download" >Download</button>
-</div>
-
-</div>
-`;
-
-x.addEventListener("click",(e)=>{
-  var el=e.target.closest("[data-action]");
-  if(!el) return;
-  var action=el.dataset.action;
-  
-  if(action == "url"){
-    Android.oplink('https://github.com/danielmzy/YouTube-Lite/releases');
-  }else if(action == "download"){
-    Android.downvid('YouTubeLite.zip','https://nightly.link/danielmzy/YouTube-Lite/workflows/gradle/main/YouTubeLite-release.zip','application/zip');  
-  }else if(action =="cancel"){
-    el.parentElement.parentElement.parentElement.remove();
-  }
-  
-})
-
-document.body.appendChild(x);
-}
 
  
 
-window.onload = function(){
-if(parseFloat(Android.getInfo()) < parseFloat(YTProVer) && (window.location.href == "https://m.youtube.com/" || window.location.href == "https://m.youtube.com") ){
-updateModel();
+function runAutoUpdateCheck(){
+ try{
+  if(location.href!="https://m.youtube.com/" && location.href!="https://m.youtube.com") return;
+  var last=parseInt(localStorage.getItem("ytlUpdChecked")||"0",10)||0;
+  if(Date.now()-last <= 6*3600*1000) return;
+  localStorage.setItem("ytlUpdChecked", String(Date.now()));
+  fetchLatestRelease(function(rel){
+    if(!rel) return;
+    var latest=(rel.tag_name||rel.name||"").trim();
+    if(latest && verGt(latest,Android.getInfo())) showUpdateDialog(rel);
+  },function(){});
+ }catch(e){}
 }
-
-};
+if(document.readyState==="complete"){ setTimeout(runAutoUpdateCheck,1500); }
+else { window.addEventListener("load",function(){ setTimeout(runAutoUpdateCheck,1500); }); }
 
 
 
