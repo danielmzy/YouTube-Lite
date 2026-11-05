@@ -100,6 +100,12 @@ The APK loads scripts from `app/src/main/assets/`. `scripts/script.js`, `scripts
 
 The asset handler injects them with a `?v=<timestamp>` query and `Cache-Control: no-store`, so a rebuild is enough to pick up changes — no app data reset needed.
 
+### Opening YouTube links from other apps
+
+`MainActivity` declares `VIEW` / `BROWSABLE` filters for `youtube.com`, `*.youtube.com` and `youtu.be`, plus a `SEND` filter for `text/plain`. When it is launched with one of those intents, `urlFromIntent()` extracts the URL (also accepting `vnd.youtube:` links and URLs inside shared text) and loads it in the WebView. Other hosts are ignored and the app opens the home feed.
+
+On Android 12+ an unverified web link is not opened by the app automatically. Users can enable it under **Settings → Apps → YouTube Lite → Open by default → Add link**, and should disable the official YouTube app's link handling if it is installed.
+
 ## 5. In-app updates
 
 The updater talks to `https://api.github.com/repos/danielmzy/YouTube-Lite/releases/latest`, compares that tag with the installed `versionName`, and downloads the first `*.apk` asset of the release through `DownloadManager` (`apkDownload` / `apkProgress` / `installApk`).

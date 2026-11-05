@@ -120,6 +120,8 @@ Compared with [YTPro](https://github.com/prateek-chaubey/YTPro), this build is r
 * **Startup screen** — branded splash with logo, wordmark and progress bar
 * **Check for Updates rewritten** — the old hardcoded/offline version compare is gone; the app now queries this repository's GitHub Releases (`releases/latest`), compares the release tag with the installed `versionName`, shows the real release notes, then downloads and installs the APK in-app with progress and live speed
 * **Removed** — custom "hearts" / Liked Videos system and the related settings rows
+* **Security hardening** — the JavaScript bridge only responds to YouTube pages, and links to other sites are opened by the system browser instead of inside the WebView
+* **YouTube links open in the app** — links from browsers, other apps and the Android share sheet load inside YouTube Lite; on Android 12+ pick it once under *Open by default*
 * **Security & stability** — foreground service and receivers no longer exported; main-frame refetch hardened; MediaStore/MediaMuxer fixes
 
 ## Gemini Prompt
