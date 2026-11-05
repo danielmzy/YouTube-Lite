@@ -1,7 +1,7 @@
 /*****Youtube Lite*******
 Author: Matr1x
-Version: 3.9.2
-URI: https://github.com/prateek-chaubey/YTPRO
+Version: 1.1
+URI: https://github.com/danielmzy/YouTube-Lite
 */
 
 if (typeof MediaMetadata === 'undefined') {

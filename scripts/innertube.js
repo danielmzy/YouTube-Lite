@@ -1,7 +1,7 @@
 /*****Youtube Lite*******
 Author: Matr1x
-Version: 4.0.0
-URI: https://github.com/prateek-chaubey/YTPRO
+Version: 1.1
+URI: https://github.com/danielmzy/YouTube-Lite
 Last Updated On: 19 Sep , 2026 , 07:11 IST
 */
 
