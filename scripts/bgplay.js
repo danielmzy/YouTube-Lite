@@ -1,6 +1,6 @@
 /*****Youtube Lite*******
 Author: Matr1x
-Version: 1.1
+Version: 1.2
 URI: https://github.com/danielmzy/YouTube-Lite
 */
 

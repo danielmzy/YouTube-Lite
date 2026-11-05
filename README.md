@@ -19,7 +19,7 @@ A clean, lightweight YouTube client for Android. YouTube Lite wraps the YouTube 
 
 ### Prebuilt APK
 
-Grab the latest signed build from **[Releases](https://github.com/danielmzy/YouTube-Lite/releases/latest)** — for example `YouTube_Lite-V1.1.apk`.
+Grab the latest signed build from **[Releases](https://github.com/danielmzy/YouTube-Lite/releases/latest)** — for example `YouTube_Lite-V1.2.apk`.
 
 * Android 5.0+ (API 21)
 * Installs side by side with the original YTPro

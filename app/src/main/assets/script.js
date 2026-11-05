@@ -1,6 +1,6 @@
 /*****Youtube Lite*******
 Author: Matr1x
-Version: 1.1
+Version: 1.2
 URI: https://github.com/danielmzy/YouTube-Lite
 Last Updated On: 26 Sep , 2026 , 22:25 IST
 */
@@ -861,7 +861,7 @@ aboutPage.innerHTML=`<style>#aboutPageDiv a{text-decoration:underline;}</style>
 <br><br>
 <b style="font-size:1.5rem;color:${c};">YouTube Lite</b>
 <br><br>
-<span id="ytlAboutVer" style="font-size:1.1rem;">V1.1</span>
+<span id="ytlAboutVer" style="font-size:1.1rem;">V1.2</span>
 <br><br>
 <p style="font-size:1.2rem;width:calc(100% - 20px);margin:auto;text-align:left;"><b style="font-weight:bold">Disclaimer</b>: This is an educational project aimed at showcasing javascript injection into a webview to enhance productivity.<br>
 You can find the source code at <a href="${YTL.URL.repo}/" style="font-family:monospace;" > ${YTL.URL.repo}/</a>
