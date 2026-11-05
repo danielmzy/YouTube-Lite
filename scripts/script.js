@@ -2821,7 +2821,7 @@ x.setAttribute("style",`height:100%;width:100%;position:fixed;display:grid;align
 x.innerHTML=`
 <div style="height:auto;width:70%;padding:20px;background:rgba(0,0,0,.6);border:1px solid #888;box-shadow:0px 0px 5px black;color:white;backdrop-filter:blur(10px);border-radius:15px;margin:auto">
 <h2> Update Available</h2><br>
-Latest Version ${YTProVer} of Youtube Lite is available , update Youtube Lite to get latest features.
+Latest Version ${YTProVer} of YouTube Lite is available, update YouTube Lite to get the latest features.
 <br>
 - Fixed Downloader<br>
 - Added container lables on Audio Only<br>
@@ -2845,9 +2845,9 @@ x.addEventListener("click",(e)=>{
   var action=el.dataset.action;
   
   if(action == "url"){
-    Android.oplink('https://github.com/prateek-chaubey/YTPRO/releases');
+    Android.oplink('https://github.com/danielmzy/YouTube-Lite/releases');
   }else if(action == "download"){
-    Android.downvid('Youtube Lite.zip','https://nightly.link/prateek-chaubey/YTPro/workflows/gradle/main/YTPRO.zip','application/zip');  
+    Android.downvid('YouTubeLite.zip','https://nightly.link/danielmzy/YouTube-Lite/workflows/gradle/main/YouTubeLite-release.zip','application/zip');  
   }else if(action =="cancel"){
     el.parentElement.parentElement.parentElement.remove();
   }
