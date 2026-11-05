@@ -20,13 +20,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Install Android 36 platform and build tools
         shell: pwsh
         run: |
-          sdkmanager "platforms;android-36" "build-tools;36.0.0"
+          $sdk = if ($env:ANDROID_HOME) { $env:ANDROID_HOME } else { $env:ANDROID_SDK_ROOT }
+          $sm = (Get-ChildItem "$sdk\cmdline-tools" -Recurse -Filter sdkmanager.bat | Select-Object -First 1).FullName
+          Write-Host "sdkmanager: $sm"
+          1..30 | ForEach-Object { "y" } | & $sm --licenses | Out-Null
+          & $sm "platforms;android-36" "build-tools;36.0.0"
 
       - name: Build release APK
         shell: cmd
