@@ -1,5 +1,6 @@
 package com.matr1x.youtubelite.webview;
 
+import android.app.DownloadManager;
 import android.app.PictureInPictureParams;
 import android.content.Context;
 import android.content.Intent;
@@ -78,6 +79,79 @@ public class WebAppInterface {
 		}
 	}
 	
+	@JavascriptInterface
+	public String apkDownload(String url, String name) {
+		if (url == null || (!url.startsWith("http://") && !url.startsWith("https://"))) return "";
+		try {
+			DownloadManager dm = (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
+			if (dm == null) return "";
+			String safe = DownloadUtils.sanitizeFileName(name == null ? "YouTubeLite-update.apk" : name);
+			if (!safe.toLowerCase().endsWith(".apk")) safe = safe + ".apk";
+			String unique = DownloadUtils.uniqueFileName(safe);
+			String dest = DownloadPaths.relativeDir() + "/" + unique;
+			DownloadManager.Request req = new DownloadManager.Request(Uri.parse(url));
+			req.setTitle(unique).setDescription(unique)
+				.setMimeType("application/vnd.android.package-archive")
+				.setAllowedOverMetered(true).setAllowedOverRoaming(true)
+				.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, dest)
+				.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE
+						| DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+			long id = dm.enqueue(req);
+			return String.valueOf(id);
+		} catch (Exception e) {
+			return "";
+		}
+	}
+
+	@JavascriptInterface
+	public String apkProgress(String idStr) {
+		try {
+			long id = Long.parseLong(idStr);
+			DownloadManager dm = (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
+			if (dm == null) return "{\"status\":-1}";
+			DownloadManager.Query q = new DownloadManager.Query().setFilterById(id);
+			try (Cursor c = dm.query(q)) {
+				if (c == null || !c.moveToFirst()) return "{\"status\":-1}";
+				int st = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS));
+				long done = c.getLong(c.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
+				long total = c.getLong(c.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
+				int reason = c.getInt(c.getColumnIndex(DownloadManager.COLUMN_REASON));
+				return "{\"status\":" + st + ",\"done\":" + done + ",\"total\":" + total + ",\"reason\":" + reason + "}";
+			}
+		} catch (Exception e) {
+			return "{\"status\":-1}";
+		}
+	}
+
+	@JavascriptInterface
+	public boolean installApk(String idStr) {
+		try {
+			final long id = Long.parseLong(idStr);
+			if (Build.VERSION.SDK_INT >= 26 && !activity.getPackageManager().canRequestPackageInstalls()) {
+				activity.runOnUiThread(() -> {
+					Toast.makeText(activity, "Allow installing unknown apps for YouTube Lite, then tap Install again", Toast.LENGTH_LONG).show();
+					try {
+						Intent i = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:" + activity.getPackageName()));
+						i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						activity.startActivity(i);
+					} catch (Exception ignored) {}
+				});
+				return false;
+			}
+			DownloadManager dm = (DownloadManager) activity.getSystemService(Context.DOWNLOAD_SERVICE);
+			if (dm == null) return false;
+			Uri uri = dm.getUriForDownloadedFile(id);
+			if (uri == null) return false;
+			Intent view = new Intent(Intent.ACTION_VIEW)
+				.setDataAndType(uri, "application/vnd.android.package-archive")
+				.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
+			activity.startActivity(view);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 	@JavascriptInterface
 	public void fullScreen(boolean value) {
 		activity.portrait = value;

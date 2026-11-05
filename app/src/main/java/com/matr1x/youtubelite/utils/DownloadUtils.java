@@ -63,7 +63,7 @@ public class DownloadUtils {
         }
     }
 
-    private static String sanitizeFileName(String filename) {
+    public static String sanitizeFileName(String filename) {
         String name = filename == null ? "" : filename;
         name = name.replaceAll("[\\\\/:*?\"<>|\\p{Cntrl}]", "_").trim();
         if (name.isEmpty()) name = "video";
@@ -71,7 +71,7 @@ public class DownloadUtils {
         return name;
     }
 
-    private static String uniqueFileName(String name) {
+    public static String uniqueFileName(String name) {
         File dir = DownloadPaths.dir();
         if (!new File(dir, name).exists()) return name;
 

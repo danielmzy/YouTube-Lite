@@ -1037,6 +1037,10 @@ function showUpdateDialog(rel){
   +'<h2 style="margin:0 0 6px 0;">Update Available</h2>'
   +'<div id="ytlUpdSub" style="font-size:12px;color:#aaa;margin-bottom:10px;"></div>'
   +'<div id="ytlUpdNotes" style="white-space:pre-wrap;font-size:13px;line-height:1.45;overflow:auto;max-height:38vh;padding-right:4px;"></div>'
+  +'<div id="ytlUpdProg" style="display:none;margin-top:12px;">'
+  +'<div style="height:6px;background:#333;border-radius:3px;overflow:hidden;"><div id="ytlUpdBar" style="height:100%;width:0%;background:#ff4242;transition:width .2s;"></div></div>'
+  +'<div id="ytlUpdTxt" style="font-size:12px;color:#aaa;margin-top:6px;"></div>'
+  +'</div>'
   +'<div style="display:flex;gap:10px;margin-top:14px;">'
   +'<button data-action="cancel" style="flex:1;border:0;border-radius:10px;height:34px;background:#3a3a3a;color:#fff;">Later</button>'
   +'<button data-action="url" style="flex:1;border:0;border-radius:10px;height:34px;background:#3a3a3a;color:#fff;">Release page</button>'
@@ -1049,13 +1053,69 @@ function showUpdateDialog(rel){
    var el=e.target.closest("[data-action]");
    if(!el) return;
    var action=el.dataset.action;
-   if(action==="cancel"){ x.remove(); }
-   else if(action==="download"){
-     if(apk && apk.browser_download_url){ Android.downvid(apk.name||("YouTubeLite-"+tag+".apk"),apk.browser_download_url,"application/vnd.android.package-archive"); }
-     else { Android.oplink(rel.html_url); }
-   } else if(action==="url"){ Android.oplink(rel.html_url); }
+   if(action==="cancel"){ try{ if(x._ytlTimer) clearInterval(x._ytlTimer); }catch(e){} x.remove(); }
+   else if(action==="download"){ startApkUpdate(rel,tag,apk,x); }
+   else if(action==="install"){ try{ Android.installApk(x.dataset.apkId); }catch(e){} } else if(action==="url"){ Android.oplink(rel.html_url); }
  });
  document.body.appendChild(x);
+}
+
+
+function startApkUpdate(rel,tag,apk,root){
+  if(!apk || !apk.browser_download_url){ Android.oplink(rel.html_url); return; }
+  var name = apk.name || ("YouTubeLite-"+tag+".apk");
+  if(!Android.apkDownload){
+    Android.downvid(name, apk.browser_download_url, "application/vnd.android.package-archive");
+    root.remove();
+    return;
+  }
+  var id = "";
+  try { id = Android.apkDownload(apk.browser_download_url, name); } catch(e) { id = ""; }
+  if(!id){ Android.showToast("Download could not start"); return; }
+  var prog = root.querySelector("#ytlUpdProg");
+  var bar = root.querySelector("#ytlUpdBar");
+  var txt = root.querySelector("#ytlUpdTxt");
+  var btn = root.querySelector('[data-action="download"]');
+  if(btn){ btn.disabled = true; btn.style.opacity = ".6"; btn.textContent = "Downloading…"; }
+  prog.style.display = "block";
+  var lastB = 0, lastT = Date.now(), speed = 0, timer = 0;
+  function mb(n){ return (n/1048576).toFixed(2) + " MB"; }
+  timer = setInterval(function(){
+    var p = null;
+    try { p = JSON.parse(Android.apkProgress(id)); } catch(e) { return; }
+    if(!p || p.status < 0) return;
+    var now = Date.now(), dt = (now-lastT)/1000;
+    if(p.done > lastB && dt > 0.2){ speed = (p.done-lastB)/dt; lastB = p.done; lastT = now; }
+    var pct = p.total > 0 ? Math.min(100, Math.round(p.done*100/p.total)) : 0;
+    bar.style.width = pct + "%";
+    txt.textContent = (p.total > 0 ? (pct + "% · " + mb(p.done) + " / " + mb(p.total)) : mb(p.done)) + " · " + mb(speed) + "/s";
+    if(p.status === 8){
+      clearInterval(timer);
+      txt.textContent = "Download complete — opening installer…";
+      root.dataset.apkId = id;
+      var tries = 0;
+      var tryInstall = function(){
+        tries++;
+        var ok = false;
+        try { ok = Android.installApk(id); } catch(e) {}
+        if(ok){ root.dataset.apkId=""; setTimeout(function(){ try{ root.remove(); }catch(e){} }, 1500); return; }
+        if(tries < 4){ setTimeout(tryInstall, 900); return; }
+        txt.textContent = "Download complete. Allow installs for YouTube Lite, then tap Install.";
+        if(btn){ btn.disabled=false; btn.style.opacity="1"; btn.textContent="Install"; btn.dataset.action="install"; }
+      };
+      tryInstall();
+      document.addEventListener("visibilitychange", function(){
+        if(document.visibilityState === "visible" && root.dataset.apkId){
+          try { Android.installApk(root.dataset.apkId); } catch(e) {}
+        }
+      }, {once:true});
+    } else if(p.status === 16){
+      clearInterval(timer);
+      txt.textContent = "Download failed (reason " + p.reason + ")";
+      if(btn){ btn.disabled=false; btn.style.opacity="1"; btn.textContent="Retry"; }
+    }
+  }, 600);
+  root._ytlTimer = timer;
 }
 
 
