@@ -120,17 +120,9 @@ public class MainActivity extends Activity {
             cookieManager.setAcceptThirdPartyCookies(web, true);
         }
 
-        Intent intent = getIntent();
-        String action = intent.getAction();
-        Uri data = intent.getData();
-        String url = "https://m.youtube.com/";
-        if (Intent.ACTION_VIEW.equals(action) && data != null) {
-            url = data.toString();
-        } else if (Intent.ACTION_SEND.equals(action)) {
-            String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
-            if (sharedText != null && (sharedText.contains("youtube.com") || sharedText.contains("youtu.be"))) {
-                url = sharedText;
-            }
+        String url = urlFromIntent(getIntent());
+        if (url == null) {
+            url = "https://m.youtube.com/";
         }
         
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -154,6 +146,73 @@ public class MainActivity extends Activity {
          
 
    
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        String url = urlFromIntent(intent);
+        if (url != null && web != null) {
+            web.loadUrl(url);
+        }
+    }
+
+    private static final String[] YT_HOSTS = {
+            "youtube.com", "www.youtube.com", "m.youtube.com", "music.youtube.com",
+            "youtu.be", "youtube-nocookie.com", "www.youtube-nocookie.com"
+    };
+
+    private static String urlFromIntent(Intent intent) {
+        if (intent == null) return null;
+        String action = intent.getAction();
+        if (Intent.ACTION_VIEW.equals(action)) {
+            Uri data = intent.getData();
+            if (data == null) return null;
+            String scheme = data.getScheme() == null ? "" : data.getScheme().toLowerCase();
+            if (scheme.equals("vnd.youtube") || scheme.equals("youtube")) {
+                String raw = data.getSchemeSpecificPart();
+                if (raw == null) raw = data.getHost();
+                String id = findVideoId(raw);
+                return id == null ? null : "https://m.youtube.com/watch?v=" + id;
+            }
+            if (!scheme.equals("http") && !scheme.equals("https")) return null;
+            String host = data.getHost() == null ? "" : data.getHost().toLowerCase();
+            for (String h : YT_HOSTS) {
+                if (host.equals(h)) return data.toString();
+            }
+            return null;
+        }
+        if (Intent.ACTION_SEND.equals(action)) {
+            String text = intent.getStringExtra(Intent.EXTRA_TEXT);
+            if (text == null) return null;
+            java.util.regex.Matcher m = java.util.regex.Pattern
+                    .compile("https?://[^\\s]+").matcher(text);
+            while (m.find()) {
+                String candidate = m.group();
+                try {
+                    String host = Uri.parse(candidate).getHost();
+                    if (host == null) continue;
+                    host = host.toLowerCase();
+                    for (String h : YT_HOSTS) {
+                        if (host.equals(h)) return candidate;
+                    }
+                } catch (Exception ignored) {
+                }
+            }
+        }
+        return null;
+    }
+
+    private static String findVideoId(String raw) {
+        if (raw == null) return null;
+        java.util.regex.Matcher m = java.util.regex.Pattern
+                .compile("[A-Za-z0-9_-]{11}").matcher(raw);
+        while (m.find()) {
+            String id = m.group();
+            if (!id.equals("watch") && !id.equals("https")) return id;
+        }
+        return null;
+    }
 
     private void setupReceiver() {
         broadcastReceiver = new MediaCommandReceiver(web);

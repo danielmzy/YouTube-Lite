@@ -51,6 +51,8 @@ Requirements: JDK 17, Android SDK 36 (compileSdk 36, minSdk 21). See [BUILDING.m
 
 ## Features
 
+* **Opens YouTube links** — links from browsers, other apps, or the share sheet load inside YouTube Lite when it is the chosen handler
+
 * **Google Gemini**
   * Summarise the current video
   * Customisable prompts and models
