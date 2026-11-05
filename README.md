@@ -109,6 +109,7 @@ Available variables for the Gemini prompt:
 ## ToDo
 
 * Continue working on Download manager
+* Check for Update rework
 * Bug Fix
 
 ### Credits
