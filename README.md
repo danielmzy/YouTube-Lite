@@ -85,6 +85,7 @@ Requirements: JDK 17, Android SDK 36 (compileSdk 36, minSdk 21). See [BUILDING.m
   * Downloads the release APK in-app with progress, total size and live speed
   * Opens the system installer automatically as soon as the download finishes
   * Falls back to the release page when the release has no APK asset
+  * Replaces the previous offline-only version check (no more hardcoded changelog or upstream download link)
 * **Polish**
   * Branded splash screen with progress bar
   * Adaptive launcher icon
@@ -103,7 +104,7 @@ Compared with [YTPro](https://github.com/prateek-chaubey/YTPro), this build is r
 * **UI cleanup** — Shorts bottom tab, community posts and top-bar menu can be hidden
 * **Gemini improvements** — robust title/prompt fallback, automatic retry, 200 px panel with its own scrollbar, Copy button, no "Go to the chat" link
 * **Startup screen** — branded splash with logo, wordmark and progress bar
-* **Real in-app updates** — checks this repository's GitHub Releases, compares versions, shows the release notes and installs the APK with progress and speed
+* **Check for Updates rewritten** — the old hardcoded/offline version compare is gone; the app now queries this repository's GitHub Releases (`releases/latest`), compares the release tag with the installed `versionName`, shows the real release notes, then downloads and installs the APK in-app with progress and live speed
 * **Removed** — custom "hearts" / Liked Videos system and the related settings rows
 * **Security & stability** — foreground service and receivers no longer exported; main-frame refetch hardened; MediaStore/MediaMuxer fixes
 
