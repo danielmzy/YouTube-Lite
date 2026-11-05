@@ -12,7 +12,7 @@
 
 </div>
 
-A clean, lightweight YouTube client for Android. YouTube Lite wraps the YouTube mobile web app in a hardened WebView and adds the features power users actually miss — ad blocking, background audio, gestures, a full download manager, Gemini summaries, system-caption integration and a distraction-free UI. No root, no Xposed, no system modifications, no GMS service require.
+A clean, lightweight YouTube client for Android. YouTube Lite wraps the YouTube mobile web app in a hardened WebView and adds the features power users actually miss — ad blocking, background audio, gestures, a full download manager, Gemini summaries, system-caption integration and a distraction-free UI. No root, no Xposed, no system modifications, no GMS services required.
 
 ## Download YouTube Lite
 
@@ -26,6 +26,8 @@ cd YouTube-Lite
 ```
 
 Requirements: JDK 17, Android SDK 36 (compileSdk 36, minSdk 21). See [BUILDING.md](BUILDING.md) for Android Studio steps.
+
+> **Installs side by side with the original YTPro.** YouTube Lite uses the applicationId `com.matr1x.youtubelite`, while [prateek-chaubey/YTPro](https://github.com/prateek-chaubey/YTPro) uses `com.google.android.youtube.pro`. Both can stay installed on the same phone, update independently and keep separate app data.
 
 #### Screenshots
 
@@ -84,6 +86,7 @@ Requirements: JDK 17, Android SDK 36 (compileSdk 36, minSdk 21). See [BUILDING.m
 
 Compared with [YTPro](https://github.com/prateek-chaubey/YTPro), this build is rebranded and extended:
 
+* **Runs alongside the original** — different applicationId and label, so YouTube Lite and YTPro can be installed on the same device without overwriting each other
 * **New download manager** — grouped history, per-video folders, live speed, full/audio/video suffixes, thumbnails and captions included, one-tap open with the system player
 * **New RYD pill** — replaces the native like/dislike row, shows 👍/👎 and a ratio bar
 * **System captions bridge** — reads Android's accessibility caption settings and applies them to the player; adds a "Default Subtitles" toggle
@@ -135,6 +138,7 @@ This is an unofficial, educational project. It is not affiliated with, endorsed 
 - **下载管理器**：视频/纯音频/封面/字幕，本地合流 MP4；按视频分组、历史记录、实时速度、一键用系统播放器打开
 - **Gemini 总结**：可选模型、可改提示词、一键复制，面板独立滚动
 - **后台播放 / 画中画 / 启动页**
+- **可与原版共存**：包名为 `com.matr1x.youtubelite`，与原版 YTPro 的 `com.google.android.youtube.pro` 不同，可同时安装、互不覆盖、数据独立
 
 **构建**：JDK 17 + Android SDK 36，执行 `./gradlew assembleDebug`，产物在 `app/build/outputs/apk/debug/app-debug.apk`。
 
