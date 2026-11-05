@@ -20,6 +20,11 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Set up Gradle cache
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: false
+
       - name: Install Android 36 platform and build tools
         shell: pwsh
         run: |
@@ -31,7 +36,10 @@ jobs:
 
       - name: Build release APK
         shell: cmd
-        run: gradlew.bat assembleRelease
+        run: >
+          gradlew.bat assembleRelease --no-daemon
+          "-Dorg.gradle.internal.repository.max.retries=5"
+          "-Dorg.gradle.internal.repository.initial.backoff=1000"
 
       - name: Sign APK
         shell: cmd
