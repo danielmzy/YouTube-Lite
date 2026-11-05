@@ -2974,3 +2974,20 @@ function showCurtain(){
   }
 
 }
+
+
+/* YouTube Lite: hide the "Google Account" button on the You tab */
+(function(){
+  function hideGoogleAccount(){
+    try {
+      var links = document.querySelectorAll('yt-flexible-actions-view-model a[href^="https://myaccount.google.com"]');
+      for (var i=0;i<links.length;i++){
+        var a = links[i];
+        var box = a.closest('.ytFlexibleActionsViewModelAction') || a.closest('button-view-model') || a;
+        if (box && box.style.display !== 'none') box.style.display = 'none';
+      }
+    } catch(e) {}
+  }
+  hideGoogleAccount();
+  setInterval(hideGoogleAccount, 700);
+})();
