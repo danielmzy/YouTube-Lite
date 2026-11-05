@@ -1335,7 +1335,7 @@ var clr = div.querySelector("#ytdlClear");
 if(clr){
 clr.addEventListener("click", function(e){
 e.stopPropagation();
-try{ localStorage.removeItem("ytdlHist"); }catch(err){}
+try{ localStorage.removeItem(YTL.KEY.hist); }catch(err){}
 try{ var _d0 = document.getElementById("ytdlDetail"); if(_d0) _d0.style.display = "none"; }catch(e0){}
 var list = div.querySelector("#ytdlList");
 if(list){
@@ -1424,10 +1424,10 @@ return m ? m[1] : "";
 }catch(e){ return ""; }
 }
 function ytdlHist(){
-try{ var h = JSON.parse(localStorage.getItem("ytdlHist") || "[]"); return Array.isArray(h) ? h : []; }catch(e){ return []; }
+try{ var h = JSON.parse(localStorage.getItem(YTL.KEY.hist) || "[]"); return Array.isArray(h) ? h : []; }catch(e){ return []; }
 }
 function ytdlSaveHist(h){
-try{ localStorage.setItem("ytdlHist", JSON.stringify(h.slice(-300))); }catch(e){}
+try{ localStorage.setItem(YTL.KEY.hist, JSON.stringify(h.slice(-300))); }catch(e){}
 }
 function ytdlOpenFile(name){
 var ok = false;
@@ -1501,7 +1501,7 @@ row.addEventListener("touchstart", function(e){
 if(e.touches && e.touches.length!==1) return;
 var t=e.touches?e.touches[0]:e; sx=t.clientX; sy=t.clientY; fired=false;
 clearT();
-timer=setTimeout(function(){ fired=true; ytdlShowFileMenu(name,row); }, 550);
+timer=setTimeout(function(){ fired=true; ytdlShowFileMenu(name,row); }, YTL.MS.longPress);
 }, {passive:true});
 row.addEventListener("touchmove", function(e){
 if(!timer) return; var t=e.touches?e.touches[0]:e;

@@ -19,7 +19,7 @@ var script = document.createElement('script'); script.src="//youtube.com/ytpro_c
   if(window.__ytlShortsTabTimer) return;
   window.__ytlShortsTabTimer=setInterval(function(){
     try{
-      var on=localStorage.getItem("shorts")=="true";
+      var on=localStorage.getItem(YTL.KEY.shorts)=="true";
       var tabs=document.querySelectorAll("ytm-pivot-bar-renderer .pivot-bar-item-tab.pivot-shorts");
       for(var i=0;i<tabs.length;i++){
         var it=tabs[i].closest("ytm-pivot-bar-item-renderer")||tabs[i];
@@ -27,7 +27,7 @@ var script = document.createElement('script'); script.src="//youtube.com/ytpro_c
         if(it.style.display!==want) it.style.display=want;
       }
     }catch(e){}
-  },400);
+  },YTL.MS.shorts);
 })();
 if(!YTProVer){
 
@@ -77,7 +77,7 @@ localStorage.setItem("gesM","false");
 localStorage.setItem("fzoom","false");
 localStorage.setItem("saveCInfo","true");
 localStorage.setItem("geminiModel","3.5 Flash-Lite");
-localStorage.setItem("prompt",`Give me details about this YouTube video Id: {videoId} , titled "{title}" , a detailed summary of timestamps with facts , resources and reviews of the main content`);
+localStorage.setItem(YTL.KEY.prompt,`Give me details about this YouTube video Id: {videoId} , titled "{title}" , a detailed summary of timestamps with facts , resources and reviews of the main content`);
 localStorage.setItem("devMode","false");
 
 localStorage.setItem("block_60fps","false");
@@ -493,7 +493,7 @@ if(!vs) return;
 vs.muted=false;
 if(!vs.muted){ clearInterval(unV); }
 }catch(e){}
-}, 250);
+}, YTL.MS.unmute);
 
 }
 
@@ -754,7 +754,7 @@ ytpSetI.innerHTML+=`<br><b style='font-size:18px' >YouTube Lite Settings</b>
 <div>Autoskip Sponsors <span data-action="sttCnf" data-value="autoSpn" style="${sttCnf(0,0,"autoSpn")}" ><b style="${sttCnf(0,1,"autoSpn")}"></b></span></div>
 <br>
 <div>Default Max Quality <span data-action="sttCnf" data-value="maxQuality" style="${sttCnf(0,0,"maxQuality")}" ><b style="${sttCnf(0,1,"maxQuality")}"></b></span></div>
-<div>Default Subtitles <span data-action="sttCnf" data-value="defSubs" style="${sttCnf(0,0,"defSubs")}" ><b style="${sttCnf(0,1,"defSubs")}"></b></span></div>
+<div>Default Subtitles <span data-action="sttCnf" data-value="defSubs" style="${sttCnf(0,0,YTL.KEY.defSubs)}" ><b style="${sttCnf(0,1,YTL.KEY.defSubs)}"></b></span></div>
 <br>
 <div>Gesture Controls <span data-action="sttCnf" data-value="gesC" style="${sttCnf(0,0,"gesC")}" ><b style="${sttCnf(0,1,"gesC")}"></b></span></div>
 <br>
@@ -764,7 +764,7 @@ ytpSetI.innerHTML+=`<br><b style='font-size:18px' >YouTube Lite Settings</b>
 <br>
 <div>Background Play <span data-action="sttCnf" data-value="bgplay" style="${sttCnf(0,0,"bgplay")}" ><b style="${sttCnf(0,1,"bgplay")}" ></b></span></div> 
 <br>
-<div>Hide Shorts <span data-action="sttCnf" data-value="shorts" style="${sttCnf(0,0,"shorts")}" ><b style="${sttCnf(0,1,"shorts")}" ></b></span></div> 
+<div>Hide Shorts <span data-action="sttCnf" data-value="shorts" style="${sttCnf(0,0,YTL.KEY.shorts)}" ><b style="${sttCnf(0,1,YTL.KEY.shorts)}" ></b></span></div> 
 <br>
 <div>Hide Community Posts <span data-action="sttCnf" data-value="communityPosts" style="${sttCnf(0,0,"communityPosts")}" ><b style="${sttCnf(0,1,"communityPosts")}" ></b></span></div> 
 <br>
@@ -818,7 +818,7 @@ ytpSetI.innerHTML+=`<br><b style='font-size:18px' >YouTube Lite Settings</b>
 <div class="geminiPrompt" style="text-align:center;">
 <div style="height:auto;width:calc(100% - 20px);padding:2px 0 10px;display:flex;align-items:center;gap:8px;text-align:left;position:static;margin-top:0;"><button data-action="closePanel" style="width:auto;height:auto;padding:2px 6px 2px 0;background:transparent;border:0;display:flex;align-items:center;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="${c}" viewBox="0 0 24 24" style="float:none;"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button><span style="position:static;right:auto;width:auto;height:auto;border-radius:0;background:transparent;display:inline-block;font-size:1.05rem;font-weight:600;">Edit Gemini Prompt</span></div>
 <textarea>
-${localStorage.getItem("prompt")}
+${localStorage.getItem(YTL.KEY.prompt)}
 </textarea>
 
 <button data-action="savePrompt" style="margin-top:10px;width:25%;float:right;text-align:center;background:${c};color:${dc};" >Save</button>
@@ -864,7 +864,7 @@ aboutPage.innerHTML=`<style>#aboutPageDiv a{text-decoration:underline;}</style>
 <span id="ytlAboutVer" style="font-size:1.1rem;">V1.1</span>
 <br><br>
 <p style="font-size:1.2rem;width:calc(100% - 20px);margin:auto;text-align:left;"><b style="font-weight:bold">Disclaimer</b>: This is an educational project aimed at showcasing javascript injection into a webview to enhance productivity.<br>
-You can find the source code at <a href="https://github.com/danielmzy/YouTube-Lite/" style="font-family:monospace;" > https://github.com/danielmzy/YouTube-Lite/</a>
+You can find the source code at <a href="${YTL.URL.repo}/" style="font-family:monospace;" > ${YTL.URL.repo}/</a>
 <br><br><span style="font-family:'Dancing Script','cursive';font-weight:bold;font-style:normal;-webkit-text-stroke:0.55px #ffffff">In Memorise of Ma Xuesen</span><br><br><b>Special Thanks to:</b><br>prateek-chaubey, YTPro(https://github.com/prateek-chaubey/YTPRO).<br>Anarios, return-youtube-dislike(https://github.com/Anarios/return-youtube-dislike)<br>OpenAI, Codex</p>
 <br><br><br>`;
 ytpSet.appendChild(aboutPage);
@@ -908,13 +908,13 @@ checkUpdate:()=>{
     document.getElementsByClassName('geminiPrompt')[0].style.display='block';
   },
   issues:()=>{
-    Android.oplink('https://github.com/danielmzy/YouTube-Lite/issues');
+    Android.oplink(YTL.URL.repo + '/issues');
   },
   disableCodecs:()=>{
     document.getElementsByClassName('disableCodecs')[0].style.display='block';document.getElementsByClassName('disableCodecs')[0].innerHTML=getYTPROCodecs();
   },
   savePrompt:(el)=>{
-    localStorage.setItem('prompt',el.previousElementSibling.value);el.parentElement.style.display='none';
+    localStorage.setItem(YTL.KEY.prompt,el.previousElementSibling.value);el.parentElement.style.display='none';
   },
   done:(el)=>{
     el.parentElement.style.display='none';
@@ -1009,7 +1009,7 @@ a.click();
 
 function parseVer(v){ v=String(v||"").trim().replace(/^v/i,""); var m=v.match(/\d+(?:\.\d+)*/); if(!m) return [0]; return m[0].split(".").map(function(x){return parseInt(x,10)||0;}); }
 function verGt(a,b){ var A=parseVer(a),B=parseVer(b); for(var i=0;i<Math.max(A.length,B.length);i++){ var x=A[i]||0,y=B[i]||0; if(x!==y) return x>y; } return false; }
-function fetchLatestRelease(ok,err){ fetch("https://api.github.com/repos/danielmzy/YouTube-Lite/releases/latest",{headers:{"Accept":"application/vnd.github+json"},cache:"no-store"}).then(function(r){ if(r.status===404){ ok(null); return null; } if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); }).then(function(j){ if(j) ok(j); }).catch(function(e){ if(err) err(e && e.message ? e.message : String(e)); }); }
+function fetchLatestRelease(ok,err){ fetch(YTL.URL.releasesApi,{headers:{"Accept":"application/vnd.github+json"},cache:"no-store"}).then(function(r){ if(r.status===404){ ok(null); return null; } if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); }).then(function(j){ if(j) ok(j); }).catch(function(e){ if(err) err(e && e.message ? e.message : String(e)); }); }
 function checkUpdates(){
  Android.showToast("Checking for updates…");
  fetchLatestRelease(function(rel){
@@ -1666,10 +1666,10 @@ function ytlVideoTitle(){
 
 function ytlGeminiPrompt(){
   var p=null;
-  try{ p=localStorage.getItem('prompt'); }catch(e){}
+  try{ p=localStorage.getItem(YTL.KEY.prompt); }catch(e){}
   if(!p){
     p='Give me details about this YouTube video Id: {videoId} , titled \"{title}\" , a detailed summary of timestamps with facts , resources and reviews of the main content';
-    try{ localStorage.setItem('prompt',p); }catch(e){}
+    try{ localStorage.setItem(YTL.KEY.prompt,p); }catch(e){}
   }
   var vid='';
   try{ vid=new URL(location.href).searchParams.get('v')||''; }catch(e){}
@@ -1933,7 +1933,7 @@ function hideTopbarDots(){
 /*THE 0NE AND 0NLY FUNCTION*/
 function applyShortsTab(){
   try{
-    var on = localStorage.getItem("shorts") == "true";
+    var on = localStorage.getItem(YTL.KEY.shorts) == "true";
     var tabs = document.querySelectorAll("ytm-pivot-bar-renderer .pivot-bar-item-tab.pivot-shorts");
     for(var i=0;i<tabs.length;i++){
       var item = tabs[i].closest("ytm-pivot-bar-item-renderer") || tabs[i];
@@ -2408,7 +2408,7 @@ ytoldV=window.location.pathname;
 
 
 if(window.__pkcTimer) clearInterval(window.__pkcTimer);
-window.__pkcTimer=setInterval(pkc,300);
+window.__pkcTimer=setInterval(pkc,YTL.MS.pkc);
 
 /*Tell the native splash that the injected UI is ready*/
 try{ setTimeout(function(){ try{ Android.splashReady(); }catch(e){} }, 1200); }catch(e){}
@@ -2744,7 +2744,7 @@ document.querySelectorAll("ytm-backstage-post-thread-renderer")?.forEach(el => e
  
 
 /*Hide Shorts*/
-if(localStorage.getItem("shorts") == "true"){
+if(localStorage.getItem(YTL.KEY.shorts) == "true"){
 
 
 for( x in document.getElementsByClassName("big-shorts-singleton")){
@@ -2911,9 +2911,9 @@ observer.observe(targetNode, config);
 function runAutoUpdateCheck(){
  try{
   if(location.href!="https://m.youtube.com/" && location.href!="https://m.youtube.com") return;
-  var last=parseInt(localStorage.getItem("ytlUpdChecked")||"0",10)||0;
+  var last=parseInt(localStorage.getItem(YTL.KEY.upd)||"0",10)||0;
   if(Date.now()-last <= 6*3600*1000) return;
-  localStorage.setItem("ytlUpdChecked", String(Date.now()));
+  localStorage.setItem(YTL.KEY.upd, String(Date.now()));
   fetchLatestRelease(function(rel){
     if(!rel) return;
     var latest=(rel.tag_name||rel.name||"").trim();
@@ -2987,5 +2987,5 @@ function showCurtain(){
     } catch(e) {}
   }
   hideGoogleAccount();
-  if(!window.__ytlGaTimer) window.__ytlGaTimer=setInterval(hideGoogleAccount, 1000);
+  if(!window.__ytlGaTimer) window.__ytlGaTimer=setInterval(hideGoogleAccount, YTL.MS.ga);
 })();

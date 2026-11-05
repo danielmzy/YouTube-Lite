@@ -87,21 +87,16 @@ Debug builds enable WebView remote debugging. Open `chrome://inspect` in Chrome/
 | `app/src/main/java/com/matr1x/youtubelite/utils/` | `DownloadPaths`, `DownloadUtils`, `MediaMuxerUtils` |
 | `app/src/main/java/com/matr1x/youtubelite/captions/CaptioningController.java` | Reads Android caption settings and injects `captions.js` / `player-fixes.js` / `quality.js` |
 | `app/src/main/java/com/matr1x/youtubelite/ForegroundService.java` | Media playback foreground service and notification |
-| `app/src/main/assets/` | JavaScript injected at runtime — `script.js`, `innertube.js`, `bgplay.js`, `captions.js`, `player-fixes.js`, `quality.js` |
-| `scripts/` | Readable source copies of `script.js` and `innertube.js` |
+| `app/src/main/assets/` | JavaScript injected at runtime — `script.js`, `innertube.js`, `bgplay.js`, `constants.js`, `captions.js`, `player-fixes.js`, `quality.js` |
+| `scripts/` | Editable copies of `script.js`, `innertube.js`, `bgplay.js` (auto-synced into assets at build time) |
 | `app/src/main/res/layout/main.xml` | `FrameLayout` with the `WebView` and the splash overlay |
 | `app/build.gradle` | Namespace, SDK versions, dependency list |
 
 ### Editing the injected JavaScript
 
-The APK loads scripts from `app/src/main/assets/`. `scripts/script.js` and `scripts/innertube.js` are kept as readable working copies — **they must be copied into `assets/` before building**, otherwise your changes will not ship:
+The APK loads scripts from `app/src/main/assets/`. `scripts/script.js`, `scripts/innertube.js` and `scripts/bgplay.js` are the editable sources; the Gradle task `syncInjectedScripts` copies them into `assets/` automatically on every build (`preBuild`), so no manual copy is needed.
 
-```powershell
-Copy-Item scripts\script.js     app\src\main\assets\script.js
-Copy-Item scripts\innertube.js  app\src\main\assets\innertube.js
-```
-
-`captions.js`, `player-fixes.js`, `quality.js` and `bgplay.js` exist only under `assets/`.
+`constants.js` (shared keys, URLs and timings), `captions.js`, `player-fixes.js` and `quality.js` exist only under `assets/` and are not synced.
 
 The asset handler injects them with a `?v=<timestamp>` query and `Cache-Control: no-store`, so a rebuild is enough to pick up changes — no app data reset needed.
 

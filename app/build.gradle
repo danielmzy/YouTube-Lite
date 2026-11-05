@@ -20,6 +20,15 @@ android {
     }
 }
 
+
+// Keep app/src/main/assets in sync with scripts/ so the two copies cannot drift.
+def syncInjectedScripts = tasks.register("syncInjectedScripts", Copy) {
+    from rootProject.file("scripts")
+    include "*.js"
+    into "src/main/assets"
+}
+tasks.named("preBuild").configure { dependsOn(syncInjectedScripts) }
+
 dependencies {
     // Add your dependencies here
     implementation 'androidx.webkit:webkit:1.12.0'

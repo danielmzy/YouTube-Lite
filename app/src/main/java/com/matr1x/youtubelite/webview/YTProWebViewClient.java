@@ -162,6 +162,7 @@ public class YTProWebViewClient extends WebViewClient {
 				String assetName = "script.js";
 				if (url.contains("bgplay.js")) assetName = "bgplay.js";
 				else if (url.contains("innertube.js")) assetName = "innertube.js";
+				else if (url.contains("constants.js")) assetName = "constants.js";
 				InputStream localStream = activity.getAssets().open(assetName);
 				Map<String, String> localHeaders = new HashMap<>();
 				localHeaders.put("Access-Control-Allow-Origin", "*");
@@ -265,10 +266,24 @@ public class YTProWebViewClient extends WebViewClient {
 		return true;
 	}
 
+	private String readAsset(String name) {
+		try (java.io.InputStream in = activity.getAssets().open(name);
+			 java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream()) {
+			byte[] buf = new byte[4096];
+			int n;
+			while ((n = in.read(buf)) > 0) out.write(buf, 0, n);
+			return out.toString("UTF-8");
+		} catch (Exception e) {
+			return "";
+		}
+	}
+
 	@Override
 	public void onPageFinished(WebView view, String url) {
 		if (isYouTubeHost(url)) {
 			web.evaluateJavascript("if (window.trustedTypes && window.trustedTypes.createPolicy && !window.trustedTypes.defaultPolicy) {window.trustedTypes.createPolicy('default', {createHTML: (string) => string,createScriptURL: string => string, createScript: string => string, });}", null);
+			String consts = readAsset("constants.js");
+			if (!consts.isEmpty()) web.evaluateJavascript(consts, null);
 			web.evaluateJavascript("(function () { var script = document.createElement('script'); script.src='https://youtube.com/ytpro_cdn/npm/ytpro@latest?v=' + Date.now(); document.body.appendChild(script);  })();", null);
 			web.evaluateJavascript("(function () { var script = document.createElement('script'); script.src='https://youtube.com/ytpro_cdn/npm/ytpro@latest/bgplay.js?v=' + Date.now(); document.body.appendChild(script);  })();", null);
 			web.evaluateJavascript("(function () { var script = document.createElement('script');script.type='module';script.src='https://youtube.com/ytpro_cdn/npm/ytpro@latest/innertube.js?v=' + Date.now(); document.body.appendChild(script);  })();", null);
