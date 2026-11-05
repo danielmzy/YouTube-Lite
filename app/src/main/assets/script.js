@@ -911,7 +911,7 @@ checkUpdate:()=>{
     document.getElementsByClassName('geminiPrompt')[0].style.display='block';
   },
   issues:()=>{
-    Android.oplink('https://github.com/prateek-chaubey/YTPRO/issues');
+    Android.oplink('https://github.com/danielmzy/YouTube-Lite/issues');
   },
   disableCodecs:()=>{
     document.getElementsByClassName('disableCodecs')[0].style.display='block';document.getElementsByClassName('disableCodecs')[0].innerHTML=getYTPROCodecs();
