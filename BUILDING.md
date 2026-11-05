@@ -5,7 +5,7 @@ YouTube Lite is a lightweight Android client that wraps the YouTube mobile web a
 | Item | Value |
 |---|---|
 | Package / applicationId | `com.matr1x.youtubelite` |
-| Version name | `4.0` |
+| Version name / code | `1.0` / `1` |
 | compileSdk / targetSdk | 36 / 36 |
 | minSdk | 21 (Android 5.0) |
 | Android Gradle Plugin | 8.13.0 |
@@ -15,7 +15,7 @@ YouTube Lite is a lightweight Android client that wraps the YouTube mobile web a
 ## Requirements
 
 * **JDK 17+** — AGP 8.13 requires JDK 17; 21 also works.
-* **Android SDK** — Platform 36, Build-Tools 36.x, Platform-Tools (`adb`).
+* **Android SDK** — Platform 36, Build-Tools 36.0.0, Platform-Tools (`adb`).
 * **Gradle 8.13** — use the bundled wrapper (`gradlew`), no separate install needed.
 * **Network access on the first build** — AGP and `androidx.webkit:webkit:1.12.0` are fetched from `google()` and `mavenCentral()`.
 
@@ -82,7 +82,7 @@ Debug builds enable WebView remote debugging. Open `chrome://inspect` in Chrome/
 |---|---|
 | `app/src/main/java/com/matr1x/youtubelite/MainActivity.java` | Hosts the `WebView`, loads `m.youtube.com`, handles permissions and the splash hand-off |
 | `app/src/main/java/com/matr1x/youtubelite/webview/YTProWebViewClient.java` | Main-frame refetch, asset interception for `youtube.com/ytpro_cdn/...`, API hooks |
-| `app/src/main/java/com/matr1x/youtubelite/webview/WebAppInterface.java` | JavaScript bridge: downloads, muxer, file open, download folder, splash ready |
+| `app/src/main/java/com/matr1x/youtubelite/webview/WebAppInterface.java` | JavaScript bridge: downloads, in-app update download/install, muxer, file open, download folder, splash ready |
 | `app/src/main/java/com/matr1x/youtubelite/webview/BinaryStreamManager.java` | Writes SABR video/audio stream chunks to temporary tracks |
 | `app/src/main/java/com/matr1x/youtubelite/utils/` | `DownloadPaths`, `DownloadUtils`, `MediaMuxerUtils` |
 | `app/src/main/java/com/matr1x/youtubelite/captions/CaptioningController.java` | Reads Android caption settings and injects `captions.js` / `player-fixes.js` / `quality.js` |
@@ -105,10 +105,18 @@ Copy-Item scripts\innertube.js  app\src\main\assets\innertube.js
 
 The asset handler injects them with a `?v=<timestamp>` query and `Cache-Control: no-store`, so a rebuild is enough to pick up changes — no app data reset needed.
 
-## 5. Build variants
+## 5. In-app updates
+
+The updater talks to `https://api.github.com/repos/danielmzy/YouTube-Lite/releases/latest`, compares that tag with the installed `versionName`, and downloads the first `*.apk` asset of the release through `DownloadManager` (`apkDownload` / `apkProgress` / `installApk`).
+
+* The manifest declares `android.permission.REQUEST_INSTALL_PACKAGES`; without it the installer intent is rejected.
+* On Android 8+ the first update prompts for **Install unknown apps → YouTube Lite**. The app opens that screen automatically and can retry the install.
+* To make a release visible to the updater, tag it higher than the installed `versionName` and attach the signed APK as a release asset.
+
+## 6. Build variants
 
 * **debug** — no minification, WebView remote debugging enabled. This is the variant used for development and screenshots.
-* **release** — `minifyEnabled true` with the default `proguard-android.txt` rules. The release APK is unsigned until you configure a signing config.
+* **release** — `minifyEnabled true` with the default `proguard-android.txt` rules. Gradle outputs an unsigned APK (`app-release-unsigned.apk`); the GitHub Actions workflow signs it with the keys in `signer/` and uploads `YouTubeLite-signed.apk`. You can run the same `apksigner` command locally (see below).
 
 If you add new bridge classes or methods that are reached via reflection, keep them from being renamed:
 
@@ -123,7 +131,15 @@ If you add new bridge classes or methods that are reached via reflection, keep t
 ./gradlew assembleRelease
 ```
 
-## 6. Troubleshooting
+GitHub Actions (`.github/workflows/gradle.yml`) builds and signs the release APK on every push to `main` using `signer/apksigner.jar` with `signer/apkeasytool.pk8` / `signer/apkeasytool.pem`, then uploads the `YouTubeLite-release` artifact (`YouTubeLite-signed.apk`). To sign locally:
+
+```bash
+java -jar signer/apksigner.jar sign --key signer/apkeasytool.pk8 --cert signer/apkeasytool.pem \
+  --v4-signing-enabled false --out YouTubeLite-signed.apk \
+  app/build/outputs/apk/release/app-release-unsigned.apk
+```
+
+## 7. Troubleshooting
 
 | Symptom | Fix |
 |---|---|
@@ -135,8 +151,10 @@ If you add new bridge classes or methods that are reached via reflection, keep t
 | Captions do not appear | Enable **Settings → Accessibility → Captions** on the device; the app follows that switch. The in-app **Default Subtitles** toggle forces captions on for every video |
 | 4K option missing | The video may not offer 4K, or the device lacks the codec; YouTube falls back to a supported track |
 | Release build loses the JS bridge | Add the ProGuard keep rules shown above |
+| Update downloaded but no installer appears | Allow **Install unknown apps → YouTube Lite**; the app opens that settings screen and retries |
+| Update check says "No releases published yet" | Publish a GitHub Release whose tag is higher than the installed `versionName` |
 | `adb: no devices` | Enable USB debugging and authorize the computer |
 
-## 7. License
+## 8. License
 
 MIT — see [LICENSE](LICENSE). This is an unofficial, educational project and is not affiliated with, endorsed by, or sponsored by YouTube or Google.

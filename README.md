@@ -27,6 +27,8 @@ cd YouTube-Lite
 
 Requirements: JDK 17, Android SDK 36 (compileSdk 36, minSdk 21). See [BUILDING.md](BUILDING.md) for Android Studio steps.
 
+> **Updates** — once a release is published on this repository, YouTube Lite can download and install it directly. See [Updater](#features).
+
 > **Installs side by side with the original YTPro.** YouTube Lite uses the applicationId `com.matr1x.youtubelite`, while [prateek-chaubey/YTPro](https://github.com/prateek-chaubey/YTPro) uses `com.google.android.youtube.pro`. Both can stay installed on the same phone, update independently and keep separate app data.
 
 #### Screenshots
@@ -77,6 +79,12 @@ Requirements: JDK 17, Android SDK 36 (compileSdk 36, minSdk 21). See [BUILDING.m
   * Default max quality
   * Enable / disable media codecs
   * Force zoom
+* **Updater**
+  * Checks GitHub Releases on launch (throttled to once every 6 hours) and from **Settings → Check for Updates**
+  * Compares the release tag with the installed version and shows the real release notes
+  * Downloads the release APK in-app with progress, total size and live speed
+  * Opens the system installer automatically as soon as the download finishes
+  * Falls back to the release page when the release has no APK asset
 * **Polish**
   * Branded splash screen with progress bar
   * Adaptive launcher icon
@@ -95,6 +103,7 @@ Compared with [YTPro](https://github.com/prateek-chaubey/YTPro), this build is r
 * **UI cleanup** — Shorts bottom tab, community posts and top-bar menu can be hidden
 * **Gemini improvements** — robust title/prompt fallback, automatic retry, 200 px panel with its own scrollbar, Copy button, no "Go to the chat" link
 * **Startup screen** — branded splash with logo, wordmark and progress bar
+* **Real in-app updates** — checks this repository's GitHub Releases, compares versions, shows the release notes and installs the APK with progress and speed
 * **Removed** — custom "hearts" / Liked Videos system and the related settings rows
 * **Security & stability** — foreground service and receivers no longer exported; main-frame refetch hardened; MediaStore/MediaMuxer fixes
 
@@ -109,7 +118,6 @@ Available variables for the Gemini prompt:
 ## ToDo
 
 * Continue working on Download manager
-* Check for Update rework
 * Bug Fix
 
 ### Credits
