@@ -121,28 +121,3 @@ Available variables for the Gemini prompt:
 ## Disclaimer
 
 This is an unofficial, educational project. It is not affiliated with, endorsed by, or sponsored by YouTube or Google. "YouTube", "Gemini" and related marks are trademarks of Google LLC. Use at your own risk and respect YouTube's Terms of Service.
-
----
-
-## 中文简介
-
-**YouTube Lite** 是一个轻量、干净的第三方 YouTube 安卓客户端：用加固的 WebView 承载 YouTube 移动网页，再通过注入脚本补上实用功能，无需 root、不修改系统。
-
-**主要功能**
-
-- **去广告**：移除信息流推广卡片；从播放器响应中剔除视频广告；播放器里残留的可跳过广告自动跳过
-- **清爽界面**：隐藏 Shorts（含底栏入口）、社区帖子、顶栏三点菜单、原生点赞/点踩数字
-- **点踩显示**：RYD 胶囊显示 👍/👎 与比例条
-- **手势控制**：左侧上下滑调亮度、右侧调音量，带实时指示条；全屏上划推荐已拦截
-- **桌面级画质**：走 YouTube 桌面 WEB 接口取流，最高 **4K**，含 **AV1 / VP9 / AVC** 多种编码
-- **字幕直连系统**：读取 Android「设置 → 无障碍 → 字幕」的开关、字号、颜色与背景并实时应用；「默认字幕」开关可为所有视频强制开启
-- **下载管理器**：视频/纯音频/封面/字幕，本地合流 MP4；按视频分组、历史记录、实时速度、一键用系统播放器打开
-- **Gemini 总结**：可选模型、可改提示词、一键复制，面板独立滚动
-- **后台播放 / 画中画 / 启动页**
-- **可与原版共存**：包名为 `com.matr1x.youtubelite`，与原版 YTPro 的 `com.google.android.youtube.pro` 不同，可同时安装、互不覆盖、数据独立
-
-**构建**：JDK 17 + Android SDK 36，执行 `./gradlew assembleDebug`，产物在 `app/build/outputs/apk/debug/app-debug.apk`。
-
-**声明**：非官方项目，与 YouTube/Google 无关，仅供学习交流。
-
-**致谢**：基于 [YTPro](https://github.com/prateek-chaubey/YTPro)（MIT），点踩数据来自 [return-youtube-dislike](https://github.com/Anarios/return-youtube-dislike)。
