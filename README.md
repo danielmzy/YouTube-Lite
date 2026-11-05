@@ -7,6 +7,7 @@
 
 ![License](https://img.shields.io/github/license/danielmzy/YouTube-Lite)
 ![Last commit](https://img.shields.io/github/last-commit/danielmzy/YouTube-Lite)
+![Latest release](https://img.shields.io/github/v/release/danielmzy/YouTube-Lite)
 ![Platform](https://img.shields.io/badge/platform-Android%205.0%2B-3ddc84)
 ![Min SDK](https://img.shields.io/badge/minSdk-21-blue)
 
@@ -16,7 +17,16 @@ A clean, lightweight YouTube client for Android. YouTube Lite wraps the YouTube 
 
 ## Download YouTube Lite
 
-No prebuilt APK is published yet — build it in a minute:
+### Prebuilt APK
+
+Grab the latest signed build from **[Releases](https://github.com/danielmzy/YouTube-Lite/releases/latest)** — for example `YouTube_Lite-V1.0.apk`.
+
+* Android 5.0+ (API 21)
+* Installs side by side with the original YTPro
+
+### Build from source
+
+Prefer to compile it yourself? Nothing else is required:
 
 ```bash
 git clone https://github.com/danielmzy/YouTube-Lite.git
@@ -25,9 +35,9 @@ cd YouTube-Lite
 # APK: app/build/outputs/apk/debug/app-debug.apk
 ```
 
-Requirements: JDK 17, Android SDK 36 (compileSdk 36, minSdk 21). See [BUILDING.md](BUILDING.md) for Android Studio steps.
+Requirements: JDK 17, Android SDK 36 (compileSdk 36, minSdk 21). See [BUILDING.md](BUILDING.md) for Android Studio steps and release signing.
 
-> **Updates** — once a release is published on this repository, YouTube Lite can download and install it directly. See [Updater](#features).
+> **Updates** — YouTube Lite can download and install new releases directly; see [Updater](#features).
 
 > **Installs side by side with the original YTPro.** YouTube Lite uses the applicationId `com.matr1x.youtubelite`, while [prateek-chaubey/YTPro](https://github.com/prateek-chaubey/YTPro) uses `com.google.android.youtube.pro`. Both can stay installed on the same phone, update independently and keep separate app data.
 
