@@ -32,7 +32,7 @@ var script = document.createElement('script'); script.src="//youtube.com/ytpro_c
 if(!YTProVer){
 
 /*Few Stupid Inits*/
-var YTProVer="4.0";
+var YTProVer="1.0";
 var ytoldV="";
 var isF=false;   //what is this for?
 var isAp=false; // oh it's for bg play 
@@ -863,12 +863,12 @@ aboutPage.innerHTML=`<style>#aboutPageDiv a{text-decoration:underline;}</style>
 <br><br>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 1440" style="width:84px;height:84px;border-radius:20px;display:block;margin:0 auto;" shape-rendering="geometricPrecision"><rect width="1440" height="1440" rx="322" fill="#FFFFFF"/><g transform="translate(721,720.5) scale(1.5) translate(-721,-720.5)"><path fill="#FF0030" d="M488,488 H954 A105,105 0 0 1 1059,593 V848 A105,105 0 0 1 954,953 H488 A105,105 0 0 1 383,848 V593 A105,105 0 0 1 488,488 Z"/><path fill="#FFFFFF" d="M652,623 L825,721 L652,819 Z"/><path fill="#FFFFFF" d="M565,848 h18 v80 h-18 z M565,910 h84 v18 h-84 z M667,848 h18 v80 h-18 z M703,848 h86 v18 h-86 z M737,866 h18 v62 h-18 z M807,848 h18 v80 h-18 z M825,848 h52 v18 h-52 z M825,879 h34 v18 h-34 z M825,910 h52 v18 h-52 z"/></g></svg>
 <br><br>
-<b style="font-size:1.5rem;color:${c};">Youtube Lite</b>
+<b style="font-size:1.5rem;color:${c};">YouTube Lite</b>
 <br><br>
-<span style="font-size:1.1rem;">V1.5</span>
+<span style="font-size:1.1rem;">V1.0</span>
 <br><br>
 <p style="font-size:1.2rem;width:calc(100% - 20px);margin:auto;text-align:left;"><b style="font-weight:bold">Disclaimer</b>: This is an educational project aimed at showcasing javascript injection into a webview to enhance productivity.<br>
-You can find the source code at <a href="https://www.youtube.com/redirect?q=https://github.com/prateek-chaubey/YTPRO" style="font-family:monospace;" > https://github.com/prateek-chaubey/YTPRO</a>
+You can find the source code at <a href="https://github.com/danielmzy/YouTube-Lite/" style="font-family:monospace;" > https://github.com/danielmzy/YouTube-Lite/</a>
 <br><br><span style="font-family:'Dancing Script','cursive';font-weight:bold;font-style:normal;-webkit-text-stroke:0.55px #ffffff">In Memorise of Ma Xuesen</span><br><br><b>Special Thanks to:</b><br>prateek-chaubey, YTPro(https://github.com/prateek-chaubey/YTPRO).<br>Anarios, return-youtube-dislike(https://github.com/Anarios/return-youtube-dislike)<br>OpenAI, Codex</p>
 <br><br><br>`;
 ytpSet.appendChild(aboutPage);
