@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="1440dp"
+    android:height="1440dp"
+    android:viewportWidth="1440"
+    android:viewportHeight="1440">
+
+    <path
+        android:fillColor="#000000"
+        android:fillType="evenOdd"
+        android:pathData="M488,488 H954 A105,105 0 0 1 1059,593 V848 A105,105 0 0 1 954,953 H488 A105,105 0 0 1 383,848 V593 A105,105 0 0 1 488,488 Z M652,623 L825,721 L652,819 Z M565,848 h18 v80 h-18 z M565,910 h84 v18 h-84 z M667,848 h18 v80 h-18 z M703,848 h86 v18 h-86 z M737,866 h18 v62 h-18 z M807,848 h18 v80 h-18 z M825,848 h52 v18 h-52 z M825,879 h34 v18 h-34 z M825,910 h52 v18 h-52 z" />
+</vector>
