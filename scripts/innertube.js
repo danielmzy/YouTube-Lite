@@ -5,8 +5,14 @@ URI: https://github.com/danielmzy/YouTube-Lite
 Last Updated On: 19 Sep , 2026 , 07:11 IST
 */
 
-
-
+/*
+ * InnerTube + download manager runtime.
+ *
+ * Reads WEB player responses (formats, subtitles), renders the format
+ * sheet, streams SABR chunks into BinaryStreamManager, and owns the
+ * download history UI exposed through the window.ytdl* helpers that the
+ * Android bridge calls back into.
+ */
 window.ytproSabrDownload= async function() {
 
 

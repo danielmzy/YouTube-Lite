@@ -25,6 +25,13 @@ import java.util.Map;
 import javax.net.ssl.HttpsURLConnection;
 import android.util.Log;
 
+/**
+ * WebView client for YouTube Lite.
+ *
+ * <p>Serves the bundled scripts from assets through the YouTube origin,
+ * keeps YouTube links inside the app, hands every other link to the
+ * browser, and injects the feature scripts after each page load.</p>
+ */
 public class YTProWebViewClient extends WebViewClient {
 	
 	private final MainActivity activity;
@@ -52,6 +59,7 @@ public class YTProWebViewClient extends WebViewClient {
 		}
 	}
 	
+	/** Serves bundled JS from assets; falls back to the network on failure. */
 	@Override
 	public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
 		String url = request.getUrl().toString();
@@ -239,6 +247,7 @@ public class YTProWebViewClient extends WebViewClient {
 		}
 	}
 
+	/** Keeps YouTube in the WebView and sends other links to the browser. */
 	@Override
 	public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
 		return handleUrl(view, request.getUrl());
@@ -249,6 +258,7 @@ public class YTProWebViewClient extends WebViewClient {
 		return handleUrl(view, Uri.parse(url));
 	}
 
+	/** Returns true when the URL was handled (kept in-app or opened externally). */
 	private boolean handleUrl(WebView view, Uri uri) {
 		try {
 			String host = uri.getHost() == null ? "" : uri.getHost().toLowerCase();
@@ -301,6 +311,7 @@ public class YTProWebViewClient extends WebViewClient {
 		}
 	}
 
+	/** Injects constants + feature scripts and pushes the caption config. */
 	@Override
 	public void onPageFinished(WebView view, String url) {
 		if (isYouTubeHost(url)) {

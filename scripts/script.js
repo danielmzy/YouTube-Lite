@@ -5,9 +5,18 @@ URI: https://github.com/danielmzy/YouTube-Lite
 Last Updated On: 26 Sep , 2026 , 22:25 IST
 */
 
-
-
-
+/*
+ * Injected into every YouTube page.
+ *
+ * Layout of this file:
+ *   boot / branding / dark mode
+ *   settings overlay (Download, Subtitle system, Gestures, Updates, About)
+ *   RYD dislikes, sponsor skip, codec list, Gemini panel
+ *   updater (GitHub Releases API + APK handoff)
+ *   fullscreen gestures, Shorts and Google Account hiding
+ *
+ * Loaded after constants.js and before innertube.js / captions.js.
+ */
 if(window.eruda == null && localStorage.getItem("devMode") == "true"){
 //ERUDA
 var script = document.createElement('script'); script.src="//youtube.com/ytpro_cdn/npm/eruda"; document.body.appendChild(script); script.onload=()=>{eruda.init();}

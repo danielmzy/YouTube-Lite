@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 // Import the main files from the parent package
 import com.matr1x.youtubelite.MainActivity;
 
+/** Permission requests, file chooser and fullscreen callbacks. */
 public class YTProWebChromeClient extends WebChromeClient {
     private final MainActivity activity;
     private final YTProWebView web;

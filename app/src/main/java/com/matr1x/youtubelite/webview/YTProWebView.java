@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.webkit.WebView;
 
+/** WebView subclass used by MainActivity. */
 public class YTProWebView extends WebView {
 	
 	public YTProWebView(Context context) {

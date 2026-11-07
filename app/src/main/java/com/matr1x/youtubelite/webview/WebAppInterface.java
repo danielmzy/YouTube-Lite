@@ -34,6 +34,14 @@ import com.matr1x.youtubelite.utils.MediaMuxerUtils;
 
 import org.json.JSONObject;
 
+/**
+ * JavaScript bridge exposed to the WebView as {@code Android}.
+ *
+ * <p>Privileged methods (files, downloads, intents, cookies, Gemini
+ * token) go through {@link #trusted()} so only YouTube pages can call
+ * them. Media downloads use DownloadManager and report completion back
+ * to JS; update APKs are polled with {@code apkProgress()}.</p>
+ */
 public class WebAppInterface {
 	private final MainActivity activity;
 	private final YTProWebView web;
@@ -50,6 +58,7 @@ public class WebAppInterface {
 		this.audioManager = (AudioManager) activity.getSystemService(Context.AUDIO_SERVICE);
 	}
 
+	/** True when the current page belongs to a YouTube host. */
 	private boolean trusted() {
 		try {
 			String u = activity.currentUrl;
@@ -83,6 +92,7 @@ public class WebAppInterface {
 		activity.startActivity(startMain);
 	}
 	
+	/** Queues a media download and reports success/failure to the injected JS. */
 	@JavascriptInterface
 	public void downvid(String name, String url, String m) {
 		if (!trusted()) return;
@@ -112,6 +122,7 @@ public class WebAppInterface {
 		}).start();
 	}
 	
+	/** Queues an APK download; returns the DownloadManager id as a string. */
 	@JavascriptInterface
 	public String apkDownload(String url, String name) {
 		if (!trusted()) return "";
@@ -137,6 +148,7 @@ public class WebAppInterface {
 		}
 	}
 
+	/** Returns {status, done, total, reason} for an update APK download. */
 	@JavascriptInterface
 	public String apkProgress(String idStr) {
 		try {
@@ -157,6 +169,7 @@ public class WebAppInterface {
 		}
 	}
 
+	/** Opens a finished APK in the system installer (asks for permission if needed). */
 	@JavascriptInterface
 	public boolean installApk(String idStr) {
 		if (!trusted()) return false;
@@ -254,6 +267,7 @@ public class WebAppInterface {
 		muxVideoAudio(videoFileName, audioFileName, outputFileName, null);
 	}
 
+	/** Merges video + audio into {@code folder} (null = current download folder). */
 	@JavascriptInterface
 	public void muxVideoAudio(String videoFileName,String audioFileName,String outputFileName,String folder) {
 		if (!trusted()) return;
@@ -286,6 +300,7 @@ public class WebAppInterface {
 		});
 	}
 	
+	/** Opens a finished download through MediaStore. */
 	@JavascriptInterface
 	public boolean openDownloadedFile(String displayName) {
 		if (!trusted()) return false;

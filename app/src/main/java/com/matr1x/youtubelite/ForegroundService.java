@@ -21,6 +21,7 @@ import android.util.Log;
 
 import com.matr1x.youtubelite.receivers.NotificationActionReceiver;
 
+/** Keeps playback alive in the background with a media notification. */
 public class ForegroundService extends Service {
 
     public static final String CHANNEL_ID = "MediaPlayback";

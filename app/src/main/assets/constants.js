@@ -1,4 +1,10 @@
-/* Central constants shared by the injected scripts. */
+/*
+ * Shared constants for the injected scripts.
+ *
+ * Injected before script.js / innertube.js so YTL.KEY, YTL.URL and
+ * YTL.MS are available to every later script and line up with the
+ * storage keys used by the Android side.
+ */
 (function () {
   var Y = window.YTL || (window.YTL = {});
   Y.KEY = {

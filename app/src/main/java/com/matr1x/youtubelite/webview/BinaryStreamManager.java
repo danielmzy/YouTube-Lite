@@ -19,6 +19,7 @@ import java.util.concurrent.Executors;
 import com.matr1x.youtubelite.utils.DownloadPaths;
 
 
+/** Writes SABR binary chunks into temporary per-track files. */
 public class BinaryStreamManager {
 
     private final YTProWebView webView;

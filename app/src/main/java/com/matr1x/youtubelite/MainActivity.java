@@ -35,6 +35,14 @@ import android.os.SystemClock;
 import com.matr1x.youtubelite.receivers.MediaCommandReceiver;
 import com.matr1x.youtubelite.captions.CaptioningController;
 
+/**
+ * Single-activity WebView host for YouTube Lite.
+ *
+ * <p>Creates the WebView and the JavaScript bridge, resolves YouTube
+ * links from VIEW/SEND intents (browser and share-sheet handoff), and
+ * loads the mobile YouTube site. Feature behaviour lives in the
+ * injected scripts under assets/.</p>
+ */
 public class MainActivity extends Activity {
 
 	public volatile String currentUrl = "";
@@ -54,6 +62,7 @@ public class MainActivity extends Activity {
     
     
 
+    /** Builds the WebView, installs the JS bridge and loads the first page. */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,6 +100,7 @@ public class MainActivity extends Activity {
         }).start();
     }
 
+    /** Loads the URL carried by the current intent, or the mobile home page. */
     public void load() {
               
         
@@ -147,6 +157,7 @@ public class MainActivity extends Activity {
 
    
 
+    /** Reuses this singleTask activity when another YouTube link arrives. */
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -162,6 +173,7 @@ public class MainActivity extends Activity {
             "youtu.be", "youtube-nocookie.com", "www.youtube-nocookie.com"
     };
 
+    /** Picks a YouTube URL out of VIEW data or shared text; null when unrelated. */
     private static String urlFromIntent(Intent intent) {
         if (intent == null) return null;
         String action = intent.getAction();

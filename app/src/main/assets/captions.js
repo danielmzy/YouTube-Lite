@@ -13,6 +13,13 @@
  * It is deliberately defensive: YouTube ships DOM changes all the time and any
  * exception here must never break the page.
  */
+
+/*
+ * Two runtimes are supported and selected in Settings:
+ *   system (default): Android CaptioningManager drives captions and style;
+ *   native: YouTube CC stays in control, only its styling is replaced
+ *     (yellow text, soft shadow, transparent background).
+ */
 (function () {
   'use strict';
 

@@ -15,6 +15,7 @@ import com.matr1x.youtubelite.R;
 
 import java.io.File;
 
+/** DownloadManager helpers: queue, progress, filename sanitizing, uniqueness. */
 public class DownloadUtils {
 
     /** Enqueue a download and return its DownloadManager id (-1 on failure). */
