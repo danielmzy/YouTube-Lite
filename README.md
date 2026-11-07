@@ -136,7 +136,7 @@ Available variables for the Gemini prompt:
 ## ToDo
 
 * ~~Continue working on the Download manager~~ — done
-* Continue improving the subtitle system (Default Subtitles in YouTube mode, more styling options)
+* Continue improving the subtitle system
 * Bug Fix
 
 ### Credits
