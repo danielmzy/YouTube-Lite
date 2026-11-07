@@ -70,7 +70,7 @@ Requirements: JDK 17, Android SDK 36 (compileSdk 36, minSdk 21). See [BUILDING.m
   * **Settings → Subtitle system** switches between two runtimes
   * **Android** — follows Android's accessibility caption settings: on/off, language, font scale, colors and background; restyled live inside the player
   * **YouTube** — keeps YouTube's native captions, restyled as yellow text with a soft shadow and a transparent background
-  * "Default Subtitles" forces captions on in the Android runtime
+  * "Default Subtitles" currently only works in the Android runtime; support for the YouTube runtime will be added in a future update
 * **Ad blocking**
   * In-stream video ads stripped from player responses before playback (mobile and desktop API paths)
   * Promoted / sponsored feed cards and companion banners removed
@@ -113,7 +113,7 @@ Compared with [YTPro](https://github.com/prateek-chaubey/YTPro), this build is r
 * **New download manager** — grouped history, per-video folders, live speed, full/audio/video suffixes, thumbnails and captions included, one-tap open with the system player
 * **File actions menu** — long-press a downloaded file to Open, Share or Delete it; deleting also removes the history entry
 * **New RYD pill** — replaces the native like/dislike row, shows 👍/👎 and a ratio bar
-* **Subtitle system rebuilt** — choose Android's accessibility captions (system language, size and colors) or YouTube's native captions restyled with yellow text, a soft shadow and no background; "Default Subtitles" forces captions in Android mode
+* **Subtitle system rebuilt** — **Settings → Subtitle system** switches between two runtimes: **Android** (follows Android's accessibility captions: language, size, colors and background) and **YouTube** (keeps YouTube's native CC, restyled with yellow text, a soft shadow and a transparent background); "Default Subtitles" currently only works in Android mode and will be extended to the YouTube runtime in a future update
 * **Desktop WEB API streaming** — 1440p/2160p and AV1/VP9 tracks are available from the downloader and quality picker
 * **Fullscreen fixes** — swipe-up recommendations blocked; brightness/volume strips don't block the fullscreen button
 * **UI cleanup** — Shorts bottom tab, community posts and top-bar menu can be hidden
