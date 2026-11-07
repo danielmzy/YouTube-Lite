@@ -13,13 +13,13 @@
 
 </div>
 
-A clean, lightweight YouTube client for Android. YouTube Lite wraps the YouTube mobile web app in a hardened WebView and adds the features power users actually miss — ad blocking, background audio, gestures, a full download manager, Gemini summaries, system-caption integration and a distraction-free UI. No root, no Xposed, no system modifications, no GMS services required.
+A clean, lightweight YouTube client for Android. YouTube Lite wraps the YouTube mobile web app in a hardened WebView and adds the features power users actually miss — ad blocking, background audio, gestures, a full download manager, Gemini summaries, selectable Android/YouTube captions and a distraction-free UI. No root, no Xposed, no system modifications, no GMS services required.
 
 ## Download YouTube Lite
 
 ### Prebuilt APK
 
-Grab the latest signed build from **[Releases](https://github.com/danielmzy/YouTube-Lite/releases/latest)** — for example `YouTube_Lite-V1.2.apk`.
+Grab the latest signed build from **[Releases](https://github.com/danielmzy/YouTube-Lite/releases/latest)** — for example `YouTube_Lite-V1.3.apk`.
 
 * Android 5.0+ (API 21)
 * Installs side by side with the original YTPro
@@ -66,10 +66,11 @@ Requirements: JDK 17, Android SDK 36 (compileSdk 36, minSdk 21). See [BUILDING.m
 * **Desktop-grade streams**
   * Formats resolved through YouTube's desktop WEB InnerTube API
   * Up to 4K with AV1 / VP9 / AVC variants, not the mobile-web subset
-* **Subtitles**
-  * Follows Android's accessibility caption settings — on/off, font scale, colors, background
-  * Restyled live inside the player
-  * "Default Subtitles" switch can force captions on for every video
+* **Subtitle systems**
+  * **Settings → Subtitle system** switches between two runtimes
+  * **Android** — follows Android's accessibility caption settings: on/off, language, font scale, colors and background; restyled live inside the player
+  * **YouTube** — keeps YouTube's native captions, restyled as yellow text with a soft shadow and a transparent background
+  * "Default Subtitles" forces captions on in the Android runtime
 * **Ad blocking**
   * In-stream video ads stripped from player responses before playback (mobile and desktop API paths)
   * Promoted / sponsored feed cards and companion banners removed
@@ -112,7 +113,7 @@ Compared with [YTPro](https://github.com/prateek-chaubey/YTPro), this build is r
 * **New download manager** — grouped history, per-video folders, live speed, full/audio/video suffixes, thumbnails and captions included, one-tap open with the system player
 * **File actions menu** — long-press a downloaded file to Open, Share or Delete it; deleting also removes the history entry
 * **New RYD pill** — replaces the native like/dislike row, shows 👍/👎 and a ratio bar
-* **System captions bridge** — reads Android's accessibility caption settings and applies them to the player; adds a "Default Subtitles" toggle
+* **Subtitle system rebuilt** — choose Android's accessibility captions (system language, size and colors) or YouTube's native captions restyled with yellow text, a soft shadow and no background; "Default Subtitles" forces captions in Android mode
 * **Desktop WEB API streaming** — 1440p/2160p and AV1/VP9 tracks are available from the downloader and quality picker
 * **Fullscreen fixes** — swipe-up recommendations blocked; brightness/volume strips don't block the fullscreen button
 * **UI cleanup** — Shorts bottom tab, community posts and top-bar menu can be hidden

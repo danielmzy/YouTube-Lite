@@ -29,6 +29,22 @@
   var TICK_MS = 1200;
   var MAX_ATTEMPTS = 10;
 
+  /* Subtitle system: "system" = Android caption settings bridge (this runtime),
+   * "native" = leave YouTube's own CC button / captions untouched. */
+  var MODE_KEY = (W.YTL && W.YTL.KEY && W.YTL.KEY.subsSys) || 'subsSys';
+
+  function systemMode() {
+    try { return localStorage.getItem(MODE_KEY) !== 'native'; } catch (e) { return true; }
+  }
+
+  function removeStyle() {
+    try {
+      var el = document.getElementById(STYLE_ID);
+      if (el && el.parentNode) el.parentNode.removeChild(el);
+    } catch (e) {}
+    state.styleEl = null;
+  }
+
   /* App-side "Default Subtitles" switch: force captions even when Android's
    * system captioning switch is off. Off = never interfere. */
   function forcedByApp() {
@@ -129,14 +145,16 @@
         el.id = STYLE_ID;
         el.type = 'text/css';
         (document.head || document.documentElement).appendChild(el);
-        if (state.cfg) {
-          try { el.textContent = buildCss(state.cfg); } catch (e) {}
-        }
       } catch (e) {
         return null;
       }
     }
     state.styleEl = el;
+    if (!systemMode()) {
+      try { el.textContent = buildNativeCss(); } catch (e) {}
+    } else if (state.cfg) {
+      try { el.textContent = buildCss(state.cfg); } catch (e) {}
+    }
     return el;
   }
 
@@ -187,6 +205,69 @@
       css.push('}');
     }
     return css.join('\n');
+  }
+
+  /* Fixed style for the "YouTube" caption system: yellow text, black outline,
+   * no background. Only styling - enabling/disabling stays with YouTube's CC. */
+  function buildNativeCss() {
+    return [
+      '.ytp-caption-window-container .ytp-caption-segment,',
+      '.html5-video-player .ytp-caption-segment {',
+      '  color: #FFD400 !important;',
+      '  background: transparent !important;',
+      '  background-color: transparent !important;',
+      '  text-shadow: 0 2px 6px rgba(0,0,0,0.85) !important;',
+      '  -webkit-text-stroke: 0 !important;',
+      '  font-weight: 600 !important;',
+      '}',
+      '.ytp-caption-window-container .caption-window,',
+      '.html5-video-player .caption-window {',
+      '  background: transparent !important;',
+      '  background-color: transparent !important;',
+      '  border: 0 !important;',
+      '  box-shadow: none !important;',
+      '}',
+      '.ytp-caption-window-container .ytp-captions-text,',
+      '.ytp-caption-window-container .captions-text,',
+      '.ytp-caption-window-container .caption-visual-line,',
+      '.ytp-caption-window-container .caption-window * {',
+      '  background: transparent !important;',
+      '  background-color: transparent !important;',
+      '  background-image: none !important;',
+      '  box-shadow: none !important;',
+      '}'
+    ].join('\n');
+  }
+
+  /* YouTube sometimes sets caption backgrounds inline; CSS alone cannot beat
+   * those, so mirror the same rules inline with !important. */
+  function enforceNativeStyle() {
+    try {
+      var segs = document.querySelectorAll('.ytp-caption-window-container .ytp-caption-segment');
+      var wins = document.querySelectorAll('.caption-window');
+      var i, el;
+      for (i = 0; i < wins.length; i++) {
+        el = wins[i];
+        el.style.setProperty('background', 'transparent', 'important');
+        el.style.setProperty('background-color', 'transparent', 'important');
+        el.style.setProperty('box-shadow', 'none', 'important');
+        var kids = el.querySelectorAll('*');
+        for (var j = 0; j < kids.length; j++) {
+          kids[j].style.setProperty('background', 'transparent', 'important');
+          kids[j].style.setProperty('background-color', 'transparent', 'important');
+          kids[j].style.setProperty('background-image', 'none', 'important');
+          kids[j].style.setProperty('box-shadow', 'none', 'important');
+        }
+      }
+      for (i = 0; i < segs.length; i++) {
+        el = segs[i];
+        el.style.setProperty('background', 'transparent', 'important');
+        el.style.setProperty('background-color', 'transparent', 'important');
+        el.style.setProperty('color', '#FFD400', 'important');
+        el.style.setProperty('text-shadow', '0 2px 6px rgba(0,0,0,0.85)', 'important');
+        el.style.setProperty('-webkit-text-stroke', '0', 'important');
+      }
+    } catch (e) {}
   }
 
   function measureBase() {
@@ -491,6 +572,7 @@
 
   function tick() {
     try {
+      if (!systemMode()) { enforceNativeStyle(); return; }
       if (!state.cfg) return;
       var key = videoKey();
       if (key !== state.videoKey) {
@@ -535,6 +617,8 @@
     state.scale = clamp(num(cfg.fontScale, 1), 0.5, 3);
     setVar('--ytpro-caption-scale', String(state.scale));
 
+    if (!systemMode()) { try { ensureStyle(); } catch (e) {} enforceNativeStyle(); startTimer(); log('native caption mode'); return; }
+
     var sheet = ensureStyle();
     if (sheet) {
       try { sheet.disabled = false; } catch (e) {}
@@ -569,7 +653,26 @@
       state.successKey = '';
       enableCaptions();
     },
-    current: function () { return { cfg: state.cfg, scale: state.scale, basePx: state.basePx }; }
+    current: function () { return { cfg: state.cfg, scale: state.scale, basePx: state.basePx }; },
+    mode: function () { return systemMode() ? 'system' : 'native'; },
+    setMode: function (mode) {
+      var native = String(mode) === 'native';
+      try { localStorage.setItem(MODE_KEY, native ? 'native' : 'system'); } catch (e) {}
+      if (native) {
+        if (state.autoEnabledKey && captionsOn()) disableCaptions();
+        try { ensureStyle(); } catch (e) {}
+        enforceNativeStyle();
+        startTimer();
+        state.successKey = '';
+        state.trackKey = '';
+        state.attempts = 0;
+        log('switched to native YouTube captions');
+      } else {
+        if (state.cfg) apply(state.cfg);
+        else { try { ensureStyle(); } catch (e) {} startTimer(); tick(); }
+        log('switched to Android captions');
+      }
+    }
   };
 
   document.addEventListener('visibilitychange', function () {

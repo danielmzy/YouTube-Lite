@@ -5,7 +5,7 @@ YouTube Lite is a lightweight Android client that wraps the YouTube mobile web a
 | Item | Value |
 |---|---|
 | Package / applicationId | `com.matr1x.youtubelite` |
-| Version name / code | `1.2` / `3` |
+| Version name / code | `1.3` / `4` |
 | compileSdk / targetSdk | 36 / 36 |
 | minSdk | 21 (Android 5.0) |
 | Android Gradle Plugin | 8.13.0 |
@@ -98,6 +98,15 @@ The APK loads scripts from `app/src/main/assets/`. `scripts/script.js`, `scripts
 
 `constants.js` (shared keys, URLs and timings), `captions.js`, `player-fixes.js` and `quality.js` exist only under `assets/` and are not synced.
 
+### Caption runtime
+
+`captions.js` has two modes, stored in `localStorage.subsSys` (`constants.js` → `YTL.KEY.subsSys`):
+
+* **system** (default) — applies Android's caption settings (on/off, language, font scale, colors, background) to the player's caption segments and can enable captions automatically.
+* **native** — YouTube's own CC button controls on/off and the selected track; the script only restyles captions to `#FFD400` with a soft shadow and a transparent background.
+
+The **Settings → Subtitle system** row writes the key and calls `window.YTPRO_CAPTIONS.setMode()`.
+
 The asset handler injects them with a `?v=<timestamp>` query and `Cache-Control: no-store`, so a rebuild is enough to pick up changes — no app data reset needed.
 
 ### Opening YouTube links from other apps
@@ -149,7 +158,7 @@ java -jar signer/apksigner.jar sign --key signer/apkeasytool.pk8 --cert signer/a
 | First build takes several minutes | Gradle is downloading AGP/Gradle/AndroidX; later builds are incremental |
 | Wrapper download is slow | Use a Gradle mirror, or a local Gradle 8.13 install |
 | YouTube asks to sign in / shows a captcha | YouTube applies IP-based risk control on fresh sessions; sign in once. The project ships no accounts |
-| Captions do not appear | Enable **Settings → Accessibility → Captions** on the device; the app follows that switch. The in-app **Default Subtitles** toggle forces captions on for every video |
+| Captions do not appear | Check **Settings → Subtitle system**: **Android** follows the device's Accessibility → Captions switch, while **YouTube** is controlled by the player's CC button. **Default Subtitles** forces captions on in Android mode |
 | 4K option missing | The video may not offer 4K, or the device lacks the codec; YouTube falls back to a supported track |
 | Release build loses the JS bridge | Add the ProGuard keep rules shown above |
 | Update downloaded but no installer appears | Allow **Install unknown apps → YouTube Lite**; the app opens that settings screen and retries |

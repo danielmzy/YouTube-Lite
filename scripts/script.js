@@ -737,6 +737,41 @@ column:50%;
 margin-right:2%;
 color:${c};
 }
+
+#ssprodivI div span.ytlSegs{
+position:absolute;
+right:10px;
+top:50%;
+transform:translateY(-50%);
+display:flex;
+gap:6px;
+width:auto;
+height:23px;
+background:transparent;
+border-radius:0;
+}
+#ssprodivI div span.ytlSeg{
+position:static;
+display:inline-flex;
+align-items:center;
+width:auto;
+height:23px;
+padding:0 9px;
+margin:0;
+background:transparent;
+border:1px solid ${c};
+border-radius:12px;
+color:${c};
+opacity:.5;
+font-size:12px;
+line-height:21px;
+}
+#ssprodivI div span.ytlSeg.on{
+opacity:1;
+background:${c};
+color:${dc};
+border-color:${c};
+}
 </style>`;
 ytpSetI.innerHTML+=`<br><b style='font-size:18px' >YouTube Lite Settings</b>
 <span style="font-size:10px">v${YTProVer}</span>
@@ -755,6 +790,10 @@ ytpSetI.innerHTML+=`<br><b style='font-size:18px' >YouTube Lite Settings</b>
 <br>
 <div>Default Max Quality <span data-action="sttCnf" data-value="maxQuality" style="${sttCnf(0,0,"maxQuality")}" ><b style="${sttCnf(0,1,"maxQuality")}"></b></span></div>
 <div>Default Subtitles <span data-action="sttCnf" data-value="defSubs" style="${sttCnf(0,0,YTL.KEY.defSubs)}" ><b style="${sttCnf(0,1,YTL.KEY.defSubs)}"></b></span></div>
+<div>Subtitle system <span class="ytlSegs">
+<span class="ytlSeg ${subsSysValue()==='system'?'on':''}" data-action="subsSys" data-value="system">Android</span>
+<span class="ytlSeg ${subsSysValue()==='native'?'on':''}" data-action="subsSys" data-value="native">YouTube</span>
+</span></div>
 <br>
 <div>Gesture Controls <span data-action="sttCnf" data-value="gesC" style="${sttCnf(0,0,"gesC")}" ><b style="${sttCnf(0,1,"gesC")}"></b></span></div>
 <br>
@@ -861,7 +900,7 @@ aboutPage.innerHTML=`<style>#aboutPageDiv a{text-decoration:underline;}</style>
 <br><br>
 <b style="font-size:1.5rem;color:${c};">YouTube Lite</b>
 <br><br>
-<span id="ytlAboutVer" style="font-size:1.1rem;">V1.2</span>
+<span id="ytlAboutVer" style="font-size:1.1rem;">V1.3</span>
 <br><br>
 <p style="font-size:1.2rem;width:calc(100% - 20px);margin:auto;text-align:left;"><b style="font-weight:bold">Disclaimer</b>: This is an educational project aimed at showcasing javascript injection into a webview to enhance productivity.<br>
 You can find the source code at <a href="${YTL.URL.repo}/" style="font-family:monospace;" > ${YTL.URL.repo}/</a>
@@ -899,6 +938,16 @@ checkUpdate:()=>{
     sttCnf(button,action);
     if(action == "maxQuality" && window.YTPRO_QUALITY && window.YTPRO_QUALITY.refresh){
       try{window.YTPRO_QUALITY.refresh();}catch(e){}
+    }
+  },
+  subsSys:(el)=>{
+    var v = el.dataset.value === 'native' ? 'native' : 'system';
+    try{ localStorage.setItem((window.YTL&&YTL.KEY&&YTL.KEY.subsSys)||'subsSys', v); }catch(e){}
+    ytpSetI.querySelectorAll('[data-action="subsSys"]').forEach(function(b){
+      b.classList.toggle('on', b.dataset.value === v);
+    });
+    if(window.YTPRO_CAPTIONS && window.YTPRO_CAPTIONS.setMode){
+      try{ window.YTPRO_CAPTIONS.setMode(v); }catch(e){}
     }
   },
   geminiModels:()=>{
@@ -1117,6 +1166,14 @@ function startApkUpdate(rel,tag,apk,root){
 
 
 /*Set Configration*/
+function subsSysValue(){
+try{
+var k=(window.YTL&&window.YTL.KEY&&window.YTL.KEY.subsSys)||'subsSys';
+return localStorage.getItem(k)==='native'?'native':'system';
+}catch(e){ return 'system'; }
+}
+
+
 function sttCnf(x,z,y){
 
 /*Way too complex to understand*/

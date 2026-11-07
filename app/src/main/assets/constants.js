@@ -3,6 +3,7 @@
   var Y = window.YTL || (window.YTL = {});
   Y.KEY = {
     defSubs: "defSubs",
+    subsSys: "subsSys",
     shorts: "shorts",
     prompt: "prompt",
     upd: "ytlUpdChecked",
