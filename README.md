@@ -142,6 +142,7 @@ Available variables for the Gemini prompt:
 ### Credits
 
 * [YTPro](https://github.com/prateek-chaubey/YTPro) by Prateek Chaubey — the original project this build is based on
+* [FORK-DIFFERENCES.md](FORK-DIFFERENCES.md) — a detailed code-level comparison between this fork and upstream YTPro
 * [return-youtube-dislike](https://github.com/Anarios/return-youtube-dislike) — dislike data
 * [SponsorBlock](https://github.com/ajayyy/SponsorBlock)
 * [YouTube.js](https://github.com/LuanRT/YouTube.js/)
