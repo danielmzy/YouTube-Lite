@@ -107,6 +107,8 @@ Requirements: JDK 17, Android SDK 36 (compileSdk 36, minSdk 21). See [BUILDING.m
 
 ## What's changed in this fork
 
+> For a detailed code-level comparison, see [FORK-DIFFERENCES.md](FORK-DIFFERENCES.md).
+
 Compared with [YTPro](https://github.com/prateek-chaubey/YTPro), this build is rebranded and extended:
 
 * **Runs alongside the original** — different applicationId and label, so YouTube Lite and YTPro can be installed on the same device without overwriting each other
@@ -142,7 +144,6 @@ Available variables for the Gemini prompt:
 ### Credits
 
 * [YTPro](https://github.com/prateek-chaubey/YTPro) by Prateek Chaubey — the original project this build is based on
-* [FORK-DIFFERENCES.md](FORK-DIFFERENCES.md) — a detailed code-level comparison between this fork and upstream YTPro
 * [return-youtube-dislike](https://github.com/Anarios/return-youtube-dislike) — dislike data
 * [SponsorBlock](https://github.com/ajayyy/SponsorBlock)
 * [YouTube.js](https://github.com/LuanRT/YouTube.js/)
