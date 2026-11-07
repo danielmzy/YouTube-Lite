@@ -3,16 +3,19 @@ package com.matr1x.youtubelite;
 import android.Manifest;
 import android.app.Activity;
 import android.app.PictureInPictureParams;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.hardware.camera2.CameraManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.util.Rational;
 import android.view.View;
 import android.view.WindowManager;
@@ -22,6 +25,11 @@ import android.webkit.WebView;
 import android.widget.Toast;
 import android.window.OnBackInvokedCallback;
 import android.window.OnBackInvokedDispatcher;
+
+import androidx.webkit.WebViewCompat;
+import androidx.webkit.WebViewFeature;
+
+import java.util.Collections;
 
 // Import the separated components
 import com.matr1x.youtubelite.webview.YTProWebView;
@@ -38,6 +46,14 @@ import com.matr1x.youtubelite.captions.CaptioningController;
 public class MainActivity extends Activity {
 
 	public volatile String currentUrl = "";
+
+    // Some custom ROMs report an empty camera list and Android 11 throws
+    // ArrayIndexOutOfBoundsException inside CameraManager.getCameraIdList().
+    // Chromium's WebView calls that when it enumerates media devices, which
+    // kills the app. On such devices we install a document-start shim that
+    // reports no capture devices instead.
+    public String cameraShim = null;
+    public boolean cameraShimAtDocumentStart = false;
 
     public boolean portrait = false;
     public boolean isPlaying = false;
@@ -91,6 +107,46 @@ public class MainActivity extends Activity {
         }).start();
     }
 
+    private boolean cameraEnumerationBroken() {
+        try {
+            CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+            if (manager == null) {
+                return false;
+            }
+            manager.getCameraIdList();
+            return false;
+        } catch (Throwable t) {
+            Log.w("YTL", "Camera enumeration is broken on this device", t);
+            return true;
+        }
+    }
+
+    private void installCameraShimIfNeeded() {
+        if (web == null || !cameraEnumerationBroken()) {
+            return;
+        }
+        cameraShim = "(function(){try{"
+                + "var md=navigator.mediaDevices;"
+                + "if(md){"
+                + "md.enumerateDevices=function(){return Promise.resolve([])};"
+                + "md.getUserMedia=function(){return Promise.reject(new DOMException('Camera unavailable','NotAllowedError'))};"
+                + "}"
+                + "var reject=function(c,s,e){if(e){try{e(new DOMException('Camera unavailable','NotAllowedError'))}catch(x){}}};"
+                + "if(navigator.getUserMedia)navigator.getUserMedia=reject;"
+                + "if(navigator.webkitGetUserMedia)navigator.webkitGetUserMedia=reject;"
+                + "if(navigator.mozGetUserMedia)navigator.mozGetUserMedia=reject;"
+                + "}catch(e){}})();";
+        try {
+            if (WebViewFeature.isFeatureSupported(WebViewFeature.DOCUMENT_START_SCRIPT)) {
+                WebViewCompat.addDocumentStartJavaScript(web, cameraShim,
+                        Collections.singleton("*"));
+                cameraShimAtDocumentStart = true;
+            }
+        } catch (Throwable t) {
+            Log.w("YTL", "Could not install camera shim at document start", t);
+        }
+    }
+
     public void load() {
               
         
@@ -134,7 +190,9 @@ public class MainActivity extends Activity {
         chromeClient = new YTProWebChromeClient(this, web);
         web.setWebChromeClient(chromeClient);
         web.setWebViewClient(new YTProWebViewClient(this, web));
-        
+
+        installCameraShimIfNeeded();
+
         web.loadUrl(url);
 
         setupReceiver();

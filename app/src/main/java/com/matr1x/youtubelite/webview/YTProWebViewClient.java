@@ -38,6 +38,9 @@ public class YTProWebViewClient extends WebViewClient {
 	@Override
 	public void onPageStarted(WebView view, String url, Bitmap favicon) {
 		if (activity != null && url != null) activity.currentUrl = url;
+		if (activity != null && activity.cameraShim != null && !activity.cameraShimAtDocumentStart) {
+			view.evaluateJavascript(activity.cameraShim, null);
+		}
 		if (activity.getCaptioningController() != null) {
 			activity.getCaptioningController().onPageStarted();
 		}
