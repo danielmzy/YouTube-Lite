@@ -26,6 +26,8 @@ Grab the latest signed build from **[Releases](https://github.com/danielmzy/YouT
 
 ### Build from source
 
+> **Code walkthrough** — for a function-by-function guide to the architecture and internals, see [ENGINEERING.md](ENGINEERING.md).
+
 Prefer to compile it yourself? Nothing else is required:
 
 ```bash
