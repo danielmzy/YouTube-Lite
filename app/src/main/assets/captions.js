@@ -12,6 +12,8 @@
  *
  * It is deliberately defensive: YouTube ships DOM changes all the time and any
  * exception here must never break the page.
+  *
+ * See ENGINEERING.md section 7 for the full flow.
  */
 
 /*

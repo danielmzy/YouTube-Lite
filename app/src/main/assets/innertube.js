@@ -3,7 +3,9 @@ Author: Matr1x
 Version: 1.2
 URI: https://github.com/danielmzy/YouTube-Lite
 Last Updated On: 19 Sep , 2026 , 07:11 IST
-*/
+ *
+ * See ENGINEERING.md section 6 for the full flow.
+ */
 
 /*
  * InnerTube + download manager runtime.

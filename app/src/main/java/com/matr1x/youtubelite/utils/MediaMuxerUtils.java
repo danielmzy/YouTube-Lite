@@ -20,7 +20,9 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.nio.ByteBuffer;
 
-/** Merges separate video and audio tracks into one MP4 with MediaMuxer. */
+/** Merges separate video and audio tracks into one MP4 with MediaMuxer. *
+ * <p>See ENGINEERING.md section 6.4 for the full flow.</p>
+ */
 public class MediaMuxerUtils {
 
     private static final String TAG = "YTPRO_MEDIA";

@@ -41,6 +41,8 @@ import org.json.JSONObject;
  * token) go through {@link #trusted()} so only YouTube pages can call
  * them. Media downloads use DownloadManager and report completion back
  * to JS; update APKs are polled with {@code apkProgress()}.</p>
+ *
+ * <p>See ENGINEERING.md section 5, 12 for the full flow.</p>
  */
 public class WebAppInterface {
 	private final MainActivity activity;

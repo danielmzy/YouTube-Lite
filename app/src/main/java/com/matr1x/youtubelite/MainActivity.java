@@ -42,6 +42,8 @@ import com.matr1x.youtubelite.captions.CaptioningController;
  * links from VIEW/SEND intents (browser and share-sheet handoff), and
  * loads the mobile YouTube site. Feature behaviour lives in the
  * injected scripts under assets/.</p>
+ *
+ * <p>See ENGINEERING.md section 3, 13 for the full flow.</p>
  */
 public class MainActivity extends Activity {
 

@@ -23,6 +23,8 @@ import java.util.Locale;
  * current settings to JSON and pushes them into the page, where
  * {@code assets/captions.js} applies them to the player's caption DOM and turns
  * captions on / selects the matching language track.</p>
+ *
+ * <p>See ENGINEERING.md section 7 for the full flow.</p>
  */
 public final class CaptioningController {
 

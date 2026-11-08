@@ -31,6 +31,8 @@ import android.util.Log;
  * <p>Serves the bundled scripts from assets through the YouTube origin,
  * keeps YouTube links inside the app, hands every other link to the
  * browser, and injects the feature scripts after each page load.</p>
+ *
+ * <p>See ENGINEERING.md section 4, 12 for the full flow.</p>
  */
 public class YTProWebViewClient extends WebViewClient {
 	

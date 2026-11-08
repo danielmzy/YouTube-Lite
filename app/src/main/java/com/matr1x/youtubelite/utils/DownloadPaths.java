@@ -11,6 +11,8 @@ import java.io.File;
  * is stored in Download/Youtube Lite/&lt;video title&gt;/ so that all assets of the
  * same video live together. The active folder is set from JS right before a
  * download starts.
+ *
+ * <p>See ENGINEERING.md section 6.5 for the full flow.</p>
  */
 public final class DownloadPaths {
 

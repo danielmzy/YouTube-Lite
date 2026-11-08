@@ -3,7 +3,9 @@ Author: Matr1x
 Version: 1.2
 URI: https://github.com/danielmzy/YouTube-Lite
 Last Updated On: 26 Sep , 2026 , 22:25 IST
-*/
+ *
+ * See ENGINEERING.md section 5, 8, 9, 11 for the full flow.
+ */
 
 /*
  * Injected into every YouTube page.

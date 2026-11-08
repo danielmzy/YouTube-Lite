@@ -14,7 +14,9 @@ import java.io.*;
 import java.util.Iterator;
 
 
-/** Small HTTP helper for the Gemini batchexecute endpoints. */
+/** Small HTTP helper for the Gemini batchexecute endpoints. *
+ * <p>See ENGINEERING.md section 10 for the full flow.</p>
+ */
 public class GeminiWrapper {
 
 

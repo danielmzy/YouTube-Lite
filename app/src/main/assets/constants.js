@@ -4,6 +4,8 @@
  * Injected before script.js / innertube.js so YTL.KEY, YTL.URL and
  * YTL.MS are available to every later script and line up with the
  * storage keys used by the Android side.
+  *
+ * See ENGINEERING.md section 4.1 for the full flow.
  */
 (function () {
   var Y = window.YTL || (window.YTL = {});
