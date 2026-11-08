@@ -5,7 +5,7 @@ function. It is written for developers who need to change behaviour, debug a
 regression, or decide where a new feature belongs.
 
 - Baseline: `main` at version `1.3` (`versionCode 4`)
-- Upstream: [prateek-chaubey/YTPro](https://github.com/prateek-chaubey/YTPro); see
+- Upstream: [prateek-chaubey/YTPro](https://github.com/prateek-chaubey/YTPro), source snapshot dated 2026-09-27 (`upstream/YTPro-2026-09-27.zip`); see
   [FORK-DIFFERENCES.md](FORK-DIFFERENCES.md) for the code-level delta
 - Line references use `path:line` and point at the **assets** copies under
   `app/src/main/assets/`. The same files under `scripts/` are synced by Gradle

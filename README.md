@@ -15,6 +15,8 @@
 
 A clean, lightweight YouTube client for Android. YouTube Lite wraps the YouTube mobile web app in a hardened WebView and adds the features power users actually miss — ad blocking, background audio, gestures, a full download manager, Gemini summaries, selectable Android/YouTube captions and a distraction-free UI. No root, no Xposed, no system modifications, no GMS services required.
 
+It is based on the [YTPro](https://github.com/prateek-chaubey/YTPro) source snapshot dated **2026-09-27**, included in this repository as [`upstream/YTPro-2026-09-27.zip`](upstream/YTPro-2026-09-27.zip).
+
 ## Download YouTube Lite
 
 ### Prebuilt APK
@@ -111,7 +113,7 @@ Requirements: JDK 17, Android SDK 36 (compileSdk 36, minSdk 21). See [BUILDING.m
 
 > For a detailed code-level comparison, see [FORK-DIFFERENCES.md](FORK-DIFFERENCES.md).
 
-Compared with [YTPro](https://github.com/prateek-chaubey/YTPro), this build is rebranded and extended:
+Compared with the upstream [YTPro](https://github.com/prateek-chaubey/YTPro) snapshot dated 2026-09-27, this build is rebranded and extended:
 
 * **Runs alongside the original** — different applicationId and label, so YouTube Lite and YTPro can be installed on the same device without overwriting each other
 * **New download manager** — grouped history, per-video folders, live speed, full/audio/video suffixes, thumbnails and captions included, one-tap open with the system player
@@ -145,7 +147,7 @@ Available variables for the Gemini prompt:
 
 ### Credits
 
-* [YTPro](https://github.com/prateek-chaubey/YTPro) by Prateek Chaubey — the original project this build is based on
+* [YTPro](https://github.com/prateek-chaubey/YTPro) by Prateek Chaubey — the original project this build is based on (source snapshot dated 2026-09-27)
 * [return-youtube-dislike](https://github.com/Anarios/return-youtube-dislike) — dislike data
 * [SponsorBlock](https://github.com/ajayyy/SponsorBlock)
 * [YouTube.js](https://github.com/LuanRT/YouTube.js/)

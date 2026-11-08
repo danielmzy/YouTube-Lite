@@ -3,7 +3,7 @@
 This document describes the code-level differences between **YouTube Lite** and
 [prateek-chaubey/YTPro](https://github.com/prateek-chaubey/YTPro).
 
-- Upstream reference: `main` at commit [`816b6fd`](https://github.com/prateek-chaubey/YTPro/commit/816b6fddd99a7347ba4ad3addcea2fa820c76089) (2026-10-17)
+- Upstream reference: the YTPro source snapshot dated **2026-09-27**, included as [`upstream/YTPro-2026-09-27.zip`](upstream/YTPro-2026-09-27.zip) (SHA256 `517050E6AD24CE884B6D83FE29629F35B6552D0F639FBFB8928067873CA6D491`). Its tree matches commit [`816b6fd`](https://github.com/prateek-chaubey/YTPro/commit/816b6fddd99a7347ba4ad3addcea2fa820c76089).
 - This repository: `main` at version `1.3` (`versionCode 4`)
 - Numbers below are line-level `git diff --numstat` results between the two trees. They include whitespace/formatting changes, so use them as a size indicator rather than an exact effort metric.
 
