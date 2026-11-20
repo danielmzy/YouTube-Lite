@@ -74,7 +74,7 @@ Requirements: JDK 17, Android SDK 36 (compileSdk 36, minSdk 21). See [BUILDING.m
   * **Settings → Subtitle system** switches between two runtimes
   * **Android** — follows Android's accessibility caption settings: on/off, language, font scale, colors and background; restyled live inside the player
   * **YouTube** — keeps YouTube's native captions, restyled as yellow text with a soft shadow and a transparent background
-  * "Default Subtitles" currently only works in the Android runtime; support for the YouTube runtime will be added in a future update
+  * "Default Subtitles" works in both runtimes: it turns captions on for every video, and the selected runtime decides how they are rendered
 * **Ad blocking**
   * In-stream video ads stripped from player responses before playback (mobile and desktop API paths)
   * Promoted / sponsored feed cards and companion banners removed
@@ -119,7 +119,7 @@ Compared with the upstream [YTPro](https://github.com/prateek-chaubey/YTPro) sna
 * **New download manager** — grouped history, per-video folders, live speed, full/audio/video suffixes, thumbnails and captions included, one-tap open with the system player
 * **File actions menu** — long-press a downloaded file to Open, Share or Delete it; deleting also removes the history entry
 * **New RYD pill** — replaces the native like/dislike row, shows 👍/👎 and a ratio bar
-* **Subtitle system rebuilt** — **Settings → Subtitle system** switches between two runtimes: **Android** (follows Android's accessibility captions: language, size, colors and background) and **YouTube** (keeps YouTube's native CC, restyled with yellow text, a soft shadow and a transparent background); "Default Subtitles" currently only works in Android mode and will be extended to the YouTube runtime in a future update
+* **Subtitle system rebuilt** — **Settings → Subtitle system** switches between two runtimes: **Android** (follows Android's accessibility captions: language, size, colors and background) and **YouTube** (keeps YouTube's native CC, restyled with yellow text, a soft shadow and a transparent background); "Default Subtitles" now turns captions on in both runtimes
 * **Desktop WEB API streaming** — 1440p/2160p and AV1/VP9 tracks are available from the downloader and quality picker
 * **Fullscreen fixes** — swipe-up recommendations blocked; brightness/volume strips don't block the fullscreen button
 * **UI cleanup** — Shorts bottom tab, community posts and top-bar menu can be hidden

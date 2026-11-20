@@ -103,7 +103,7 @@ The APK loads scripts from `app/src/main/assets/`. `scripts/script.js`, `scripts
 `captions.js` has two modes, stored in `localStorage.subsSys` (`constants.js` → `YTL.KEY.subsSys`):
 
 * **system** (default) — applies Android's caption settings (on/off, language, font scale, colors, background) to the player's caption segments and can enable captions automatically.
-* **native** — YouTube's own CC button controls on/off and the selected track; the script only restyles captions to `#FFD400` with a soft shadow and a transparent background.
+* **native** — YouTube's own CC button controls the selected track; "Default Subtitles" turns captions on automatically (YouTube picks the default track), and the script only restyles captions to `#FFD400` with a soft shadow and a transparent background.
 
 The **Settings → Subtitle system** row writes the key and calls `window.YTPRO_CAPTIONS.setMode()`.
 

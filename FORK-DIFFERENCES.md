@@ -67,7 +67,7 @@ hiding, gesture controls, quality and codec options.
 
 Changed in this fork:
 
-- **Settings rows** — adds a Downloads entry, `Default Subtitles`, and `Subtitle system` (Android / YouTube); removes the upstream "Liked Videos" / hearts entry; About page shows the live version.
+- **Settings rows** — adds a Downloads entry, `Default Subtitles` (works in both runtimes), and `Subtitle system` (Android / YouTube); removes the upstream "Liked Videos" / hearts entry; About page shows the live version.
 - **Updater rewritten** — the upstream hardcoded version compare and `nightly.link` ZIP download are replaced by `https://api.github.com/repos/danielmzy/YouTube-Lite/releases/latest`, release notes display, in-app APK download with progress/size/speed, automatic installer launch, and a 6-hour launch throttle.
 - **RYD pill** — recolored pill + ratio bar, native like/dislike row hidden.
 - **Gesture strips** — volume/brightness strips are only interactive in fullscreen and no longer cover the fullscreen button.

@@ -533,7 +533,12 @@ History entry shape: `{ n: fileName, t: title, th: thumbnail, v: videoId }`.
 | unset or `system` | Android caption bridge (`CaptioningController` config + `captions.js` CSS) |
 | `native` | YouTube native CC; only CSS overrides (yellow text, soft shadow, transparent background) |
 
-`Default Subtitles` (`defSubs`) only forces captions in `system` mode.
+`Default Subtitles` (`defSubs`) forces captions in both modes:
+
+- `system` — the bridge calls `toggleSubtitles()` / the CC button and then applies the system language track.
+- `native` — `enableCaptionsNative()` toggles YouTube's own CC button and leaves the default track to
+  YouTube; per-video attempts reset on navigation, and a video where the user turns CC off stays off
+  (`state.successKey` guards it).
 
 ### 7.2 Config pushed from Java
 

@@ -498,6 +498,56 @@
     }
   }
 
+  function finishNativeSuccess(key) {
+    state.successKey = key;
+    state.autoEnabledKey = key;
+    log('native captions enabled');
+  }
+
+  function clickCaptionButtonNative(key) {
+    if (captionsOn()) {
+      finishNativeSuccess(key);
+      return;
+    }
+    var btn = captionButton();
+    if (btn) {
+      try { btn.click(); } catch (e) {}
+    }
+    setTimeout(function () {
+      try {
+        if (captionsOn()) finishNativeSuccess(key);
+      } catch (e) {}
+    }, 300);
+  }
+
+  /* Default Subtitles in YouTube mode: turn on YouTube's own CC track without
+   * touching Android styling or picking a track by the system locale. */
+  function enableCaptionsNative(key) {
+    if (!forcedByApp() || !isVideoPage() || isAd()) return;
+    if (key && key === state.successKey) return;
+    if (state.attempts >= MAX_ATTEMPTS) return;
+    state.attempts++;
+    var el = player();
+    if (!el) return;
+    var toggled = false;
+    try {
+      if (typeof el.toggleSubtitles === 'function') {
+        el.toggleSubtitles();
+        toggled = true;
+      }
+    } catch (e) {}
+    if (toggled) {
+      setTimeout(function () {
+        try {
+          if (captionsOn()) finishNativeSuccess(key);
+          else clickCaptionButtonNative(key);
+        } catch (e) {}
+      }, 350);
+    } else {
+      clickCaptionButtonNative(key);
+    }
+  }
+
   function menuPass(depth) {
     try {
       if (!wantCaptions() || depth > 2) return;
@@ -581,7 +631,20 @@
 
   function tick() {
     try {
-      if (!systemMode()) { enforceNativeStyle(); return; }
+      if (!systemMode()) {
+        enforceNativeStyle();
+        if (forcedByApp() && isVideoPage() && !isAd()) {
+          var nkey = videoKey();
+          if (nkey !== state.videoKey) {
+            state.videoKey = nkey;
+            state.attempts = 0;
+            state.successKey = '';
+            state.autoEnabledKey = '';
+          }
+          if (nkey && !captionsOn() && !menuOpen()) enableCaptionsNative(nkey);
+        }
+        return;
+      }
       if (!state.cfg) return;
       var key = videoKey();
       if (key !== state.videoKey) {
@@ -626,7 +689,7 @@
     state.scale = clamp(num(cfg.fontScale, 1), 0.5, 3);
     setVar('--ytpro-caption-scale', String(state.scale));
 
-    if (!systemMode()) { try { ensureStyle(); } catch (e) {} enforceNativeStyle(); startTimer(); log('native caption mode'); return; }
+    if (!systemMode()) { try { ensureStyle(); } catch (e) {} enforceNativeStyle(); startTimer(); setTimeout(tick, 300); log('native caption mode'); return; }
 
     var sheet = ensureStyle();
     if (sheet) {
@@ -668,13 +731,14 @@
       var native = String(mode) === 'native';
       try { localStorage.setItem(MODE_KEY, native ? 'native' : 'system'); } catch (e) {}
       if (native) {
-        if (state.autoEnabledKey && captionsOn()) disableCaptions();
+        if (state.autoEnabledKey && captionsOn() && !forcedByApp()) disableCaptions();
         try { ensureStyle(); } catch (e) {}
         enforceNativeStyle();
         startTimer();
         state.successKey = '';
         state.trackKey = '';
         state.attempts = 0;
+        if (forcedByApp()) setTimeout(tick, 300);
         log('switched to native YouTube captions');
       } else {
         if (state.cfg) apply(state.cfg);
