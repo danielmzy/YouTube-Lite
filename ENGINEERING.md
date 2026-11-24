@@ -4,7 +4,7 @@ This handbook explains how YouTube Lite is built, file by file and function by
 function. It is written for developers who need to change behaviour, debug a
 regression, or decide where a new feature belongs.
 
-- Baseline: `main` at version `1.3` (`versionCode 4`)
+- Baseline: `main` at version `1.4` (`versionCode 5`)
 - Upstream: [prateek-chaubey/YTPro](https://github.com/prateek-chaubey/YTPro), source snapshot dated 2026-09-27 (`upstream/YTPro-2026-09-27.zip`); see
   [FORK-DIFFERENCES.md](FORK-DIFFERENCES.md) for the code-level delta
 - Line references use `path:line` and point at the **assets** copies under
@@ -958,6 +958,6 @@ Log tags: `YTPRO_WVC` (interception/injection), `YTPRO_STREAM` (file writes),
 | `startApkUpdate()` | script.js:1121 |
 | `geminiInfo()` | script.js:1748 |
 
-Line numbers refer to the `assets` copies at the `1.3` baseline. After editing,
+Line numbers refer to the `assets` copies at the `1.4` baseline. After editing,
 re-run the extraction or use your editor's symbol search; the function names are
 stable.

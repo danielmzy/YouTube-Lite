@@ -21,7 +21,7 @@ It is based on the [YTPro](https://github.com/prateek-chaubey/YTPro) source snap
 
 ### Prebuilt APK
 
-Grab the latest signed build from **[Releases](https://github.com/danielmzy/YouTube-Lite/releases/latest)** — for example `YouTube_Lite-V1.3.apk`.
+Grab the latest signed build from **[Releases](https://github.com/danielmzy/YouTube-Lite/releases/latest)** — for example `YouTube_Lite-V1.4.apk`.
 
 * Android 5.0+ (API 21)
 * Installs side by side with the original YTPro

@@ -4,7 +4,7 @@ This document describes the code-level differences between **YouTube Lite** and
 [prateek-chaubey/YTPro](https://github.com/prateek-chaubey/YTPro).
 
 - Upstream reference: the YTPro source snapshot dated **2026-09-27**, included as [`upstream/YTPro-2026-09-27.zip`](upstream/YTPro-2026-09-27.zip) (SHA256 `517050E6AD24CE884B6D83FE29629F35B6552D0F639FBFB8928067873CA6D491`). Its tree matches commit [`816b6fd`](https://github.com/prateek-chaubey/YTPro/commit/816b6fddd99a7347ba4ad3addcea2fa820c76089).
-- This repository: `main` at version `1.3` (`versionCode 4`)
+- This repository: `main` at version `1.4` (`versionCode 5`)
 - Numbers below are line-level `git diff --numstat` results between the two trees. They include whitespace/formatting changes, so use them as a size indicator rather than an exact effort metric.
 
 This fork is **not a clean-room rewrite**. The WebView injection model, the
@@ -18,7 +18,7 @@ native code around them.
 |---|---|---|
 | Application ID | `com.google.android.youtube.pro` | `com.matr1x.youtubelite` |
 | App label | YT Pro | YouTube Lite |
-| Version | `4.0` (`versionCode 1`) | `1.3` (`versionCode 4`) |
+| Version | `4.0` (`versionCode 1`) | `1.4` (`versionCode 5`) |
 | Injected JavaScript | fetched at runtime (CDN rewrite) | bundled in `assets/`, served locally with CDN fallback |
 | JS assets in APK | none | 7 files (`script.js`, `innertube.js`, `bgplay.js`, `captions.js`, `quality.js`, `player-fixes.js`, `constants.js`) |
 | On-screen caption runtime | not present (caption **download** only) | `captions.js` (Android and YouTube modes) |
@@ -134,7 +134,7 @@ Changed in this fork:
 
 - `app/build.gradle` gained `syncInjectedScripts`, which copies `scripts/*.js` to `assets/` on every build; the two copies no longer drift.
 - CI workflow rewritten: JDK 17, Android SDK 36 installation, Gradle cache, signed release APK artifact.
-- Releases V1.0 → V1.3 are published with an APK asset and release notes.
+- Releases V1.0 → V1.4 are published with an APK asset and release notes.
 - `README.md` and `BUILDING.md` rewritten for this repository; screenshots are from this build.
 
 ## What did not change
